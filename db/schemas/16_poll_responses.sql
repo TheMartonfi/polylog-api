@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS quiz_responses CASCADE;
+DROP TABLE IF EXISTS poll_responses CASCADE;
 
-CREATE TABLE quiz_responses (
+CREATE TABLE poll_responses (
   id SERIAL PRIMARY KEY NOT NULL,
-  quiz_answer_id INTEGER REFERENCES quiz_answers(id) ON DELETE CASCADE,
+  poll_choice_id INTEGER REFERENCES poll_choices(id) ON DELETE CASCADE,
   session_id INTEGER REFERENCES sessions(id) ON DELETE CASCADE,
   student_id INTEGER REFERENCES users(id) ON DELETE CASCADE
 );
