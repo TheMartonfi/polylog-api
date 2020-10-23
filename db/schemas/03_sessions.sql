@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS sessions CASCADE;
+
+CREATE TABLE sessions (
+  id SERIAL PRIMARY KEY NOT NULL,
+  lecturer_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL
+);

@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS quiz_cards CASCADE;
+
+CREATE TABLE quiz_cards (
+  id SERIAL PRIMARY KEY NOT NULL,
+  lecture_id INTEGER REFERENCES lectures(id) ON DELETE CASCADE,
+  order INTEGER NOT NULL
+);
