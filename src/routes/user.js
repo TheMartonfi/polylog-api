@@ -2,7 +2,6 @@ const router = require("express").Router();
 
 module.exports = db => {
 	router.get("/user", (req, res) => {
-		console.log(req.body);
 		db.query(
 			`
       SELECT
@@ -13,7 +12,7 @@ module.exports = db => {
       FROM users
       WHERE users.id = $1
     `,
-			// When the front end makes a request make it send a respond that gives me a user.id
+			// When the front end makes a request make it send a response that gives me the conditions
 			[1]
 		).then(({ rows: user }) => res.json(user[0]));
 	});
