@@ -1,12 +1,12 @@
 {
 	"name": "api",
 	"version": "1.0.0",
-	"main": "index.js",
+	"main": "server.js",
 	"repository": "git@github.com:TheMartonfi/polylog-api.git",
 	"author": "TheMartonfi <carlmartonfi@hotmail.com>",
 	"license": "MIT",
 	"scripts": {
-		"start": "nodemon ./src/index.js"
+		"start": "nodemon ./src/server.js"
 	},
 	"dependencies": {
 		"cors": "^2.8.5",
