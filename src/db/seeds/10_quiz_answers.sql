@@ -1,5 +1,5 @@
 INSERT INTO quiz_answers (
-  quiz_card_id,
+  quiz_question_id,
   answer,
   correct
 )
@@ -10,7 +10,17 @@ VALUES (
   true
 ),
 (
+  1,
+  'This is answer!',
+  true
+),
+(
   2,
+  'This is another great answer!',
+  true
+),
+(
+  3,
   'This is a terrible answer!',
   false
 );
