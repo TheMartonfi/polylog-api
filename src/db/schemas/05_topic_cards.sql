@@ -5,5 +5,5 @@ CREATE TABLE topic_cards (
   lecture_id INTEGER REFERENCES lectures(id) ON DELETE CASCADE,
   title VARCHAR(255) NOT NULL,
   description TEXT DEFAULT 'No description',
-  order INTEGER NOT NULL
+  position INTEGER NOT NULL
 );
