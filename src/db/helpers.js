@@ -1,7 +1,6 @@
 const fs = require("fs");
-const db = require(".");
 
-const runSchemaFiles = function () {
+const runSchemaFiles = db => {
 	const dbSchemas = `${__dirname}/schemas`;
 	const schemaFilenames = fs.readdirSync(dbSchemas);
 	let sql = "";
@@ -11,7 +10,7 @@ const runSchemaFiles = function () {
 	return db.query(sql);
 };
 
-const runSeedFiles = function () {
+const runSeedFiles = db => {
 	const dbSeeds = `${__dirname}/seeds`;
 	const seedFilenames = fs.readdirSync(dbSeeds);
 	let sql = "";

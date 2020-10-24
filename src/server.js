@@ -2,27 +2,16 @@ require("dotenv").config();
 
 const ENV = process.env.ENV || "development";
 const db = require("./db");
+const create = require("./routes/db/create");
+const reset = require("./routes/db/reset");
 const { runSchemaFiles, runSeedFiles } = require("./db/helpers");
 const morgan = require("morgan");
 const app = require(".");
 
 app.use(morgan("dev"));
 
-// Move the logic from here to routes later
 // Create tables or reset db
 if (ENV === "development" || ENV === "test") {
-	app.get("/api/db/create", (req, res) => {
-		runSchemaFiles()
-			.then(() => res.status(200).send("Created Database Tables"))
-			.catch(err => console.log(err));
-	});
-	app.get("/api/db/reset", (req, res) => {
-		runSchemaFiles()
-			.then(() => {
-				runSeedFiles()
-					.then(() => res.status(200).send("Database Reset"))
-					.catch(err => console.log(err));
-			})
-			.catch(err => console.log(err));
-	});
+	app.use("/api/db", create(db));
+	app.use("/api/db", reset(db));
 }
