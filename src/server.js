@@ -14,15 +14,15 @@ if (ENV === "development" || ENV === "test") {
 	app.get("/api/db/create", (req, res) => {
 		runSchemaFiles()
 			.then(() => res.status(200).send("Created Database Tables"))
-			.catch(err => res.status(500).send(err));
+			.catch(err => console.log(err));
 	});
 	app.get("/api/db/reset", (req, res) => {
 		runSchemaFiles()
 			.then(() => {
-				// runSeedFiles()
-				// .then(() => res.status(200).send("Database Reset"))
-				// .catch(err => res.status(500).send(err));
+				runSeedFiles()
+					.then(() => res.status(200).send("Database Reset"))
+					.catch(err => console.log(err));
 			})
-			.catch(err => res.status(500).send(err));
+			.catch(err => console.log(err));
 	});
 }

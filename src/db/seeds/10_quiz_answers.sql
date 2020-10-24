@@ -6,12 +6,11 @@ INSERT INTO quiz_answers (
 
 VALUES (
   1,
-  "This is a great answer!",
+  'This is a great answer!',
   true
 ),
 (
   2,
-  "Is this lecture great?",
-  "This is a terrible answer!",
+  'This is a terrible answer!',
   false
 );

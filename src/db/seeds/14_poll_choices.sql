@@ -5,9 +5,9 @@ INSERT INTO poll_choices (
 
 VALUES (
   1,
-  "Good!",
+  'Good!'
 ),
 (
   2,
-  "Yes it is!",
+  'Yes it is!'
 );

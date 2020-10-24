@@ -5,9 +5,9 @@ INSERT INTO quiz_questions (
 
 VALUES (
   1,
-  "How do you answer a great question?"
+  'How do you answer a great question?'
 ),
 (
   2,
-  "Is this lecture great?"
+  'Is this lecture great?'
 );
