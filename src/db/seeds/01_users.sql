@@ -6,14 +6,14 @@ INSERT INTO users (
 )
 
 VALUES (
-  'Carl',
-  'Comtois',
-  'carl@test.com',
-  '123'
+  "Carl",
+  "Comtois",
+  "carl@test.com",
+  "123"
 ),
 (
-  'Doug',
-  'Dyson',
-  'doug@test.com',
-  '123'
+  "Doug",
+  "Dyson",
+  "doug@test.com",
+  "123"
 );

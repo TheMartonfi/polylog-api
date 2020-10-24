@@ -8,6 +8,7 @@ const app = require(".");
 
 app.use(morgan("dev"));
 
+// Move the logic from here to routes later
 // Create tables or reset db
 if (ENV === "development" || ENV === "test") {
 	app.get("/api/db/create", (req, res) => {
