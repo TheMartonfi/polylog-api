@@ -1,14 +1,13 @@
 require("dotenv").config();
 
 const ENV = process.env.ENV || "development";
+const app = require(".");
 const db = require("./db");
 const create = require("./routes/db/create");
 const reset = require("./routes/db/reset");
-const { runSchemaFiles, runSeedFiles } = require("./db/helpers");
-const morgan = require("morgan");
-const app = require(".");
+const lectures = require("./routes/lectures");
 
-app.use(morgan("dev"));
+app.use("/api", lectures(db));
 
 // Create tables or reset db
 if (ENV === "development" || ENV === "test") {
