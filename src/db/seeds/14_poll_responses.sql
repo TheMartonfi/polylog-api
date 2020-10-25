@@ -6,11 +6,11 @@ INSERT INTO poll_responses (
 
 VALUES (
   1,
-  '92a8b77c-ad8e-446b-8ddf-f1fe4ff8f854',
+  '4a115ab1-c845-412a-b868-531cf505bf45',
   1
 ),
 (
   2,
-  '0d8b56a9-1ef6-409a-814b-ce1cb8a58845',
-  2
+  '84357fe2-dbe0-4fed-86d7-29a9fb10b5b4',
+  1
 );

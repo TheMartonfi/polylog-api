@@ -5,17 +5,41 @@ INSERT INTO quiz_questions (
 
 VALUES (
   1,
-  'How do you answer a great question?'
+  'What''s a function?'
 ),
 (
   1,
   'How do you answer?'
 ),
 (
+  1,
+  'How do you answer great question?'
+),
+(
+  1,
+  'Is this lecture great?'
+),
+(
   2,
-  'How do you answer another great question?'
+  'What''s an object?'
+),
+(
+  2,
+  'How do you answer?'
+),
+(
+  2,
+  'How do you answer great question?'
 ),
 (
   3,
-  'Is this lecture great?'
+  'What''s MVC?'
+),
+(
+  4,
+  'What''s Ruby on Rails?'
+),
+(
+  4,
+  'How do you answer?'
 );
