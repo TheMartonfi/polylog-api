@@ -12,7 +12,7 @@ VALUES (
   '123'
 ),
 (
-  'Doug',
+  'Douglas',
   'Dyson',
   'doug@test.com',
   '123'
