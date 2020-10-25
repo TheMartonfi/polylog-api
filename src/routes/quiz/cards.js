@@ -8,6 +8,7 @@ module.exports = db => {
       SELECT
         quiz_questions.quiz_card_id,
         quiz_answers.quiz_question_id,
+        quiz_answers.id AS quiz_answer_id,
         quiz_cards.title,
         quiz_questions.question,
         quiz_answers.answer,

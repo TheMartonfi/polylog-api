@@ -5,7 +5,7 @@ const parseCards = cards => {
 		const id = card.quiz_card_id;
 		const question_id = card.quiz_question_id;
 		let findParsedCard = parsedCards.find(card => card.id === id);
-
+		console.log(card);
 		if (findParsedCard === undefined) {
 			parsedCards.push({
 				id,
@@ -14,7 +14,13 @@ const parseCards = cards => {
 					{
 						question_id,
 						question: card.question,
-						answers: [{ answer: card.answer, correct: card.correct }]
+						answers: [
+							{
+								answer_id: card.quiz_answer_id,
+								answer: card.answer,
+								correct: card.correct
+							}
+						]
 					}
 				],
 				position: card.position
@@ -28,10 +34,17 @@ const parseCards = cards => {
 				findParsedCard.content.push({
 					question_id,
 					question: card.question,
-					answers: [{ answer: card.answer, correct: card.correct }]
+					answers: [
+						{
+							answer_id: card.quiz_answer_id,
+							answer: card.answer,
+							correct: card.correct
+						}
+					]
 				});
 			} else {
 				findQuestion.answers.push({
+					answer_id: card.quiz_answer_id,
 					answer: card.answer,
 					correct: card.correct
 				});
