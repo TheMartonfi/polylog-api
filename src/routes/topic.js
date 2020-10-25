@@ -110,7 +110,8 @@ module.exports = db => {
 			db.query(
 				`
         DELETE FROM topic_cards
-        WHERE topic_cards.id = $1;
+        WHERE topic_cards.id = $1
+        RETURNING *;
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
 				[]

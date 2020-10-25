@@ -31,6 +31,31 @@ module.exports = db => {
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
 		).then(({ rows: responses }) => res.json(responses));
+
+		router.put("/", (req, res) => {
+			db.query(
+				`
+        UPDATE lectures
+        SET title = $1, description = $2
+        WHERE lectures.id = $3
+        RETURNING *;
+      `,
+				// When the front end makes a request make it send a response that gives me the conditions
+				[]
+			).then(({ rows: lecture }) => res.json(lecture));
+		});
+
+		router.delete("/", (req, res) => {
+			db.query(
+				`
+        DELETE FROM lectures
+        WHERE lectures.id = $1
+        RETURNING *;
+      `,
+				// When the front end makes a request make it send a response that gives me the conditions
+				[]
+			).then(({ rows: lecture }) => res.json(lecture));
+		});
 	});
 
 	return router;
