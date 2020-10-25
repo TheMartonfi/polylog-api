@@ -92,6 +92,30 @@ module.exports = db => {
 				[]
 			).then(({ rows: reaction }) => res.json(reaction));
 		});
+
+		router.put("/card", (req, res) => {
+			db.query(
+				`
+        UPDATE topic_cards
+        SET title = $1, description = $2, position = $3
+        WHERE topic_cards.id = $4
+        RETURNING *;
+      `,
+				// When the front end makes a request make it send a response that gives me the conditions
+				[]
+			).then(({ rows: card }) => res.json(card));
+		});
+
+		router.delete("/card", (req, res) => {
+			db.query(
+				`
+        DELETE FROM topic_cards
+        WHERE topic_cards.id = $1;
+      `,
+				// When the front end makes a request make it send a response that gives me the conditions
+				[]
+			).then(({ rows: card }) => res.json(card));
+		});
 	});
 
 	return router;
