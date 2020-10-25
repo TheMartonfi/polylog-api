@@ -62,7 +62,6 @@ const parseTopicResponses = responses => {
 		if (!parsedResponses.responses && !parsedResponses.reactions) {
 			parsedResponses["responses"] = [
 				{
-					response_id: response.topic_response_id,
 					type: response.type,
 					response: response.response
 				}
@@ -70,7 +69,6 @@ const parseTopicResponses = responses => {
 			parsedResponses["reactions"] = [
 				{
 					student_id: response.student_id,
-					reaction_id: response.topic_reaction_id,
 					reaction: response.reaction
 				}
 			];
@@ -88,7 +86,6 @@ const parseTopicResponses = responses => {
 
 			if (findParsedResponse === undefined) {
 				parsedResponses.responses.push({
-					response_id: response.topic_response_id,
 					type: response.type,
 					response: response.response
 				});
@@ -97,7 +94,6 @@ const parseTopicResponses = responses => {
 			if (findParsedReaction === undefined) {
 				parsedResponses.reactions.push({
 					student_id: response.student_id,
-					reaction_id: response.topic_reaction_id,
 					reaction: response.reaction
 				});
 			}

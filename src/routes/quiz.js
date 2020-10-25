@@ -29,8 +29,8 @@ module.exports = db => {
 			`
       SELECT
         quiz_responses.student_id,
-        quiz_questions.question,
-        quiz_answers.answer,
+        quiz_responses.quiz_card_id,
+        quiz_answers.id AS quiz_answer_id,
         quiz_answers.correct
       FROM quiz_responses
       JOIN quiz_answers ON quiz_answers.id = quiz_responses.quiz_answer_id
