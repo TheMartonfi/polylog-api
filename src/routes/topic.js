@@ -14,7 +14,7 @@ module.exports = db => {
       WHERE topic_cards.lecture_id = $1
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			["4f7f1639-95b5-4950-b5f2-93d8159c0253"]
+			[1]
 		).then(({ rows: cards }) => res.json(cards));
 	});
 
@@ -35,7 +35,7 @@ module.exports = db => {
       AND topic_reactions.session_id = $2
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[1, "92a8b77c-ad8e-446b-8ddf-f1fe4ff8f854"]
+			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]
 		).then(({ rows: responses }) => res.json(parseTopicResponses(responses)));
 
 		router.post("/card", (req, res) => {

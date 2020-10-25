@@ -6,14 +6,26 @@ INSERT INTO topic_cards (
 )
 
 VALUES (
-  '4f7f1639-95b5-4950-b5f2-93d8159c0253',
-  'A great title',
-  'A great description',
+  1,
+  'What are javascript functions?',
+  'They''re reusable pieces of code!',
   1
 ),
 (
-  '74330d58-560d-497b-bd92-6744846758a4',
-  'A great title',
-  'A great description',
+  1,
+  'What are javascript objects?',
+  'They''re a data type that stores key, value pairs!',
+  2
+),
+(
+  2,
+  'What is MVC?',
+  'Model View Controller!',
   1
+),
+(
+  2,
+  'What is Rails?',
+  'It''s a Ruby framework!',
+  2
 );

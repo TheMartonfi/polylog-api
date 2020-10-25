@@ -6,14 +6,26 @@ INSERT INTO sessions (
 )
 
 VALUES (
-  '92a8b77c-ad8e-446b-8ddf-f1fe4ff8f854',
-  '74330d58-560d-497b-bd92-6744846758a4',
+  '4a115ab1-c845-412a-b868-531cf505bf45',
+  1,
   CURRENT_TIMESTAMP,
   CURRENT_TIME
 ),
 (
-  '0d8b56a9-1ef6-409a-814b-ce1cb8a58845',
-  '4f7f1639-95b5-4950-b5f2-93d8159c0253',
+  '283f6529-c72a-46af-8cfe-fcd7b80fe0bc',
+  1,
+  CURRENT_TIMESTAMP,
+  CURRENT_TIME
+),
+(
+  '84357fe2-dbe0-4fed-86d7-29a9fb10b5b4',
+  2,
+  CURRENT_TIMESTAMP,
+  CURRENT_TIME
+),
+(
+  'e52f1bd4-9d0e-426c-b50d-3935bce2b3d3',
+  2,
   CURRENT_TIMESTAMP,
   CURRENT_TIME
 );

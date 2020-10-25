@@ -8,12 +8,6 @@ INSERT INTO users (
 VALUES (
   'Carl',
   'Comtois',
-  'carl@test.com',
-  '123'
-),
-(
-  'Douglas',
-  'Dyson',
-  'doug@test.com',
+  'test@test.com',
   '123'
 );
