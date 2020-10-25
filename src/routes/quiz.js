@@ -60,5 +60,56 @@ module.exports = db => {
 		).then(({ rows: card }) => res.json(card));
 	});
 
+	router.post("/question", (req, res) => {
+		db.query(
+			`
+      INSERT INTO quiz_questions (
+        quiz_card_id,
+        question
+      )
+      
+      VALUES ($1, $2)
+      RETURNING *;
+    `,
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(({ rows: question }) => res.json(question));
+	});
+
+	router.post("/answer", (req, res) => {
+		db.query(
+			`
+      INSERT INTO quiz_answers (
+        quiz_question_id,
+        answer,
+        correct
+      )
+      
+      VALUES ($1, $2, $3)
+      RETURNING *;
+    `,
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(({ rows: answer }) => res.json(answer));
+	});
+
+	router.post("/response", (req, res) => {
+		db.query(
+			`
+      INSERT INTO quiz_responses (
+        quiz_card_id,
+        quiz_answer_id,
+        session_id,
+        student_id
+      )
+      
+      VALUES ($1, $2, $3, $4)
+      RETURNING *;
+    `,
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(({ rows: response }) => res.json(response));
+	});
+
 	return router;
 };
