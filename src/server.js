@@ -14,6 +14,7 @@ const topicCards = require("./routes/topic/cards");
 const topicResponses = require("./routes/topic/responses");
 
 const quizCards = require("./routes/quiz/cards");
+const quizResponses = require("./routes/quiz/responses");
 
 app.use("/api", lectures(db));
 app.use("/api", user(db));
@@ -22,6 +23,7 @@ app.use("/api/topic", topicCards(db));
 app.use("/api/topic", topicResponses(db));
 
 app.use("/api/quiz", quizCards(db));
+app.use("/api/quiz", quizResponses(db));
 
 // Create tables or reset db
 if (ENV === "development" || ENV === "test") {
