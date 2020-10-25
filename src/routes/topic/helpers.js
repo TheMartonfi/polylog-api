@@ -11,7 +11,11 @@ const parseResponses = responses => {
 				}
 			];
 			parsedResponses["reactions"] = [
-				{ reaction_id: response.topic_reaction_id, reaction: response.reaction }
+				{
+					student_id: response.student_id,
+					reaction_id: response.topic_reaction_id,
+					reaction: response.reaction
+				}
 			];
 		} else {
 			const findParsedResponse = parsedResponses.responses.find(res => {
@@ -35,6 +39,7 @@ const parseResponses = responses => {
 
 			if (findParsedReaction === undefined) {
 				parsedResponses.reactions.push({
+					student_id: response.student_id,
 					reaction_id: response.topic_reaction_id,
 					reaction: response.reaction
 				});

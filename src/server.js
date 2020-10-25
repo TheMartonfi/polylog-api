@@ -45,3 +45,5 @@ if (ENV === "development" || ENV === "test") {
 	app.use("/api/db", create(db));
 	app.use("/api/db", reset(db));
 }
+
+// Use quiz_questions_answers in quiz/cards.js
