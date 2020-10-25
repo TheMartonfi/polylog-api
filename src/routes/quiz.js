@@ -111,5 +111,17 @@ module.exports = db => {
 		).then(({ rows: response }) => res.json(response));
 	});
 
+	router.delete("/card", (req, res) => {
+		db.query(
+			`
+      DELETE FROM quiz_cards
+      WHERE quiz_cards.id = $1
+      RETURNING *;
+    `,
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(({ rows: card }) => res.json(card));
+	});
+
 	return router;
 };
