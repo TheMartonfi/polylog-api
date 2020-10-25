@@ -111,6 +111,28 @@ module.exports = db => {
 		).then(({ rows: response }) => res.json(response));
 	});
 
+	router.put("/card", (req, res) => {
+		db.query(
+			`
+      UPDATE quiz_cards
+      SET title = $1, position = $2
+      WHERE quiz_cards.id = $3
+
+      UPDATE quiz_questions
+      SET question = $4
+      WHERE quiz_questions.quiz_card_id = $3
+
+      UPDATE quiz_answers
+      SET answer = $5, correct = $6
+      WHERE quiz_answers.quiz_question_id = $7
+
+      RETURNING *;
+    `,
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(({ rows: card }) => res.json(card));
+	});
+
 	router.delete("/card", (req, res) => {
 		db.query(
 			`

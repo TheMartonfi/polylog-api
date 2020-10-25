@@ -22,12 +22,12 @@ module.exports = db => {
 		db.query(
 			`
       SELECT
-      topic_responses.id AS topic_response_id,
-      topic_responses.type,
-      topic_responses.response,
-      topic_reactions.student_id,
-      topic_reactions.id AS topic_reaction_id,
-      topic_reactions.reaction
+        topic_responses.id AS topic_response_id,
+        topic_responses.type,
+        topic_responses.response,
+        topic_reactions.student_id,
+        topic_reactions.id AS topic_reaction_id,
+        topic_reactions.reaction
       FROM topic_responses
       JOIN topic_reactions ON $1 = topic_reactions.topic_card_id
       WHERE topic_responses.topic_card_id = $1
