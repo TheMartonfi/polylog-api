@@ -16,15 +16,15 @@ module.exports = db => {
 		).then(({ rows: lectures }) => res.json(lectures));
 	});
 
-	router.post("/new", (req, res) => {
+	router.post("/", (req, res) => {
 		db.query(
 			`
       INSERT INTO lectures (
         lecturer_id,
         title,
         description
-      
-      )
+			)
+			
       VALUES ($1::integer, $2::text, $3::text)
       RETURNING *;
     `,

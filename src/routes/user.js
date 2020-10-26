@@ -17,7 +17,7 @@ module.exports = db => {
 		).then(({ rows: user }) => res.json(user[0]));
 	});
 
-	router.post("/new", (req, res) => {
+	router.post("/", (req, res) => {
 		db.query(
 			`
       INSERT INTO users (

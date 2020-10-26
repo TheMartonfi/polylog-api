@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { parseQuizCards } = require("./helpers");
 
 module.exports = db => {
-	router.get("/cards", (req, res) => {
+	router.get("/", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -36,7 +36,7 @@ module.exports = db => {
       JOIN quiz_answers ON quiz_answers.id = quiz_responses.quiz_answer_id
       JOIN quiz_questions ON quiz_questions.id = quiz_answers.quiz_question_id
       WHERE quiz_responses.quiz_card_id = $1::integer
-      AND quiz_responses.session_id = $2::integer
+      AND quiz_responses.session_id = $2::uuid
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]
@@ -103,7 +103,7 @@ module.exports = db => {
         student_id
       )
       
-      VALUES ($1::integer, $2::integer, $3::text, $4::integer)
+      VALUES ($1::integer, $2::integer, $3::uuid, $4::integer)
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
@@ -111,7 +111,7 @@ module.exports = db => {
 		).then(({ rows: response }) => res.json(response));
 	});
 
-	router.put("/card", (req, res) => {
+	router.put("/", (req, res) => {
 		db.query(
 			`
       UPDATE quiz_cards
@@ -135,7 +135,7 @@ module.exports = db => {
 		).then(({ rows: card }) => res.json(card));
 	});
 
-	router.delete("/card", (req, res) => {
+	router.delete("/", (req, res) => {
 		db.query(
 			`
       DELETE FROM quiz_cards

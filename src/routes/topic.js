@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { parseTopicResponses } = require("./helpers");
 
 module.exports = db => {
-	router.get("/cards", (req, res) => {
+	router.get("/", (req, res) => {
 		db.query(
 			`
 			SELECT
@@ -11,7 +11,7 @@ module.exports = db => {
 				topic_cards.description,
         topic_cards.position
 			FROM topic_cards
-      WHERE topic_cards.lecture_id = $1
+      WHERE topic_cards.lecture_id = $1::integer
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[1]
@@ -30,9 +30,9 @@ module.exports = db => {
         topic_reactions.reaction
       FROM topic_responses
       JOIN topic_reactions ON $1 = topic_reactions.topic_card_id
-      WHERE topic_responses.topic_card_id = $1
-      AND topic_responses.session_id = $2
-      AND topic_reactions.session_id = $2
+      WHERE topic_responses.topic_card_id = $1::integer
+      AND topic_responses.session_id = $2::uuid
+      AND topic_reactions.session_id = $2:uuid
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]
@@ -48,7 +48,7 @@ module.exports = db => {
           position
         )
 
-        VALUES ($1::integer, $2::integer, $3::text, $4::text)
+        VALUES ($1::integer, $2::text, $3::text, $4::integer)
         RETURNING *;
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
@@ -67,7 +67,7 @@ module.exports = db => {
           response
         )
         
-        VALUES ($1, $2, $3, $4, $5)
+        VALUES ($1::integer, $2::uuid, $3::integer, $4::text, $5::text)
         RETURNING *;
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
@@ -85,7 +85,7 @@ module.exports = db => {
           reaction
         )
         
-        VALUES ($1, $2, $3, $4)
+        VALUES ($1::integer, $2::uuid, $3::integer, $4::boolean)
         RETURNING *;
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
@@ -93,12 +93,12 @@ module.exports = db => {
 			).then(({ rows: reaction }) => res.json(reaction));
 		});
 
-		router.put("/card", (req, res) => {
+		router.put("/", (req, res) => {
 			db.query(
 				`
         UPDATE topic_cards
-        SET title = $1, description = $2, position = $3
-        WHERE topic_cards.id = $4
+        SET title = $1::text, description = $2::text, position = $3::integer
+        WHERE topic_cards.id = $4::integer
         RETURNING *;
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
@@ -106,11 +106,11 @@ module.exports = db => {
 			).then(({ rows: card }) => res.json(card));
 		});
 
-		router.delete("/card", (req, res) => {
+		router.delete("/", (req, res) => {
 			db.query(
 				`
         DELETE FROM topic_cards
-        WHERE topic_cards.id = $1
+        WHERE topic_cards.id = $1::integer
         RETURNING *;
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
