@@ -17,7 +17,6 @@ app.use("/api/session", session(db));
 app.use("/api/topic", topic(db));
 app.use("/api/quiz", quiz(db));
 
-// /create /reset
 if (ENV === "development" || ENV === "test") {
 	app.use("/api/db", dbRoutes(db));
 }

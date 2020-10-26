@@ -111,28 +111,46 @@ module.exports = db => {
 		).then(({ rows: response }) => res.json(response));
 	});
 
-	router.put("/", (req, res) => {
+	router.put("/card", (req, res) => {
 		db.query(
 			`
       UPDATE quiz_cards
       SET title = $1::text, position = $2::integer
       WHERE quiz_cards.id = $3::integer
 
-      UPDATE quiz_questions
-      SET question = $4::text
-      WHERE quiz_questions.quiz_card_id = $3::integer
-      ON CONFLICT DO NOTHING
-
-      UPDATE quiz_answers
-      SET answer = $5::text, correct = $6::boolean
-      WHERE quiz_answers.quiz_question_id = $7::integer
-      ON CONFLICT DO NOTHING
-
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
 		).then(({ rows: card }) => res.json(card));
+	});
+
+	router.put("/question", (req, res) => {
+		db.query(
+			`
+      UPDATE quiz_questions
+      SET question = $1::text
+      WHERE quiz_questions.quiz_card_id = $2::integer
+
+      RETURNING *;
+    `,
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(({ rows: question }) => res.json(question));
+	});
+
+	router.put("/answer", (req, res) => {
+		db.query(
+			`
+      UPDATE quiz_answers
+      SET answer = $1::text, correct = $2::boolean
+      WHERE quiz_answers.quiz_question_id = $3::integer
+
+      RETURNING *;
+    `,
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(({ rows: answer }) => res.json(answer));
 	});
 
 	router.delete("/", (req, res) => {
