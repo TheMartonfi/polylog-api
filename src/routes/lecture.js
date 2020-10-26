@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 module.exports = db => {
-	router.get("/", (req, res) => {
+	router.get("/:id", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -11,7 +11,7 @@ module.exports = db => {
       FROM lectures
       WHERE lecturer_id = $1::integer
     `,
-			[req.query.lecturer_id]
+			[req.params.id]
 		).then(({ rows: lectures }) => res.json(lectures));
 	});
 

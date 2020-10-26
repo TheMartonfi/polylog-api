@@ -8,7 +8,7 @@ const {
 } = require("../server");
 
 module.exports = db => {
-	router.get("/", (req, res) => {
+	router.get("/:id", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -26,11 +26,11 @@ module.exports = db => {
       WHERE quiz_cards.lecture_id = $1::integer
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[1]
+			[req.params.id]
 		).then(({ rows: cards }) => res.json(parseQuizCards(cards)));
 	});
 
-	router.get("/responses", (req, res) => {
+	router.get("/responses/:id", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -45,7 +45,7 @@ module.exports = db => {
       AND quiz_responses.session_id = $2::uuid
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]
+			[req.params.id, "4a115ab1-c845-412a-b868-531cf505bf45"]
 		).then(({ rows: responses }) => res.json(responses));
 	});
 
@@ -124,7 +124,7 @@ module.exports = db => {
 		});
 	});
 
-	router.put("/", (req, res) => {
+	router.put("/:id", (req, res) => {
 		db.query(
 			`
       UPDATE quiz_cards
@@ -133,14 +133,14 @@ module.exports = db => {
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
+			[req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
 			updateQuizCard(card.id, card.title, card.position);
 		});
 	});
 
-	router.put("/question", (req, res) => {
+	router.put("/question/:id", (req, res) => {
 		db.query(
 			`
       UPDATE quiz_questions
@@ -149,14 +149,14 @@ module.exports = db => {
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
+			[req.params.id]
 		).then(({ rows: questions }) => {
 			const [question] = questions;
 			updateQuizQuestion(question.quiz_card_id, question.id, question.question);
 		});
 	});
 
-	router.put("/answer", (req, res) => {
+	router.put("/answer/:id", (req, res) => {
 		db.query(
 			`
       UPDATE quiz_answers
@@ -165,7 +165,7 @@ module.exports = db => {
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
+			[req.params.id]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
 			updateQuizAnswer(
@@ -177,7 +177,7 @@ module.exports = db => {
 		});
 	});
 
-	router.delete("/", (req, res) => {
+	router.delete("/:id", (req, res) => {
 		db.query(
 			`
       DELETE FROM quiz_cards
@@ -185,14 +185,14 @@ module.exports = db => {
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
+			[req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
 			updateQuizCard(card.id, null, null);
 		});
 	});
 
-	router.delete("/question", (req, res) => {
+	router.delete("/question/:id", (req, res) => {
 		db.query(
 			`
       DELETE FROM quiz_questions
@@ -200,14 +200,14 @@ module.exports = db => {
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
+			[req.params.id]
 		).then(({ rows: questions }) => {
 			const [question] = questions;
 			updateQuizQuestion(question.quiz_card_id, question.id, null);
 		});
 	});
 
-	router.delete("/answer", (req, res) => {
+	router.delete("/answer/:id", (req, res) => {
 		db.query(
 			`
       DELETE FROM quiz_answers
@@ -215,7 +215,7 @@ module.exports = db => {
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
+			[req.params.id]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
 			updateQuizAnswer(answer.quiz_card_id, answer.id, null, null);

@@ -7,7 +7,7 @@ const {
 } = require("../server");
 
 module.exports = db => {
-	router.get("/", (req, res) => {
+	router.get("/:id", (req, res) => {
 		db.query(
 			`
 			SELECT
@@ -19,11 +19,11 @@ module.exports = db => {
       WHERE topic_cards.lecture_id = $1::integer
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[1]
+			[req.params.id]
 		).then(({ rows: cards }) => res.json(cards));
 	});
 
-	router.get("/responses", (req, res) => {
+	router.get("/responses/:id", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -40,7 +40,7 @@ module.exports = db => {
       AND topic_reactions.session_id = $2::uuid
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]
+			[req.params.id, "4a115ab1-c845-412a-b868-531cf505bf45"]
 		).then(({ rows: responses }) => res.json(parseTopicResponses(responses)));
 
 		router.post("/card", (req, res) => {
@@ -113,7 +113,7 @@ module.exports = db => {
 			});
 		});
 
-		router.put("/", (req, res) => {
+		router.put("/:id", (req, res) => {
 			db.query(
 				`
         UPDATE topic_cards
@@ -122,14 +122,14 @@ module.exports = db => {
         RETURNING *;
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
-				[]
+				[req.params.id]
 			).then(({ rows: cards }) => {
 				const [card] = cards;
 				updateTopicCard(card.id, card.title, card.description, card.position);
 			});
 		});
 
-		router.delete("/", (req, res) => {
+		router.delete("/:id", (req, res) => {
 			db.query(
 				`
         DELETE FROM topic_cards
@@ -137,7 +137,7 @@ module.exports = db => {
         RETURNING *;
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
-				[]
+				[req.params.id]
 			).then(({ rows: cards }) => {
 				const [card] = cards;
 				updateTopicCard(card.id, null, null, null);
