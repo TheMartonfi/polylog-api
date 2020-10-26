@@ -111,14 +111,12 @@ module.exports = db => {
 		).then(({ rows: response }) => res.json(response));
 	});
 
-	router.put("/card", (req, res) => {
+	router.put("/", (req, res) => {
 		db.query(
 			`
       UPDATE quiz_cards
       SET title = $1::text, position = $2::integer
       WHERE quiz_cards.id = $3::integer
-
-      RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
@@ -131,8 +129,6 @@ module.exports = db => {
       UPDATE quiz_questions
       SET question = $1::text
       WHERE quiz_questions.quiz_card_id = $2::integer
-
-      RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
@@ -145,8 +141,6 @@ module.exports = db => {
       UPDATE quiz_answers
       SET answer = $1::text, correct = $2::boolean
       WHERE quiz_answers.quiz_question_id = $3::integer
-
-      RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
@@ -158,7 +152,6 @@ module.exports = db => {
 			`
       DELETE FROM quiz_cards
       WHERE quiz_cards.id = $1::integer
-      RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]

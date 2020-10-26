@@ -1,15 +1,19 @@
-require("dotenv").config();
-
-const PORT = process.env.PORT || 3001;
-const ENV = process.env.ENV || "development";
 const express = require("express");
 const app = express();
+const db = require("./db");
 const morgan = require("morgan");
 
-app.use(morgan("dev"));
+const user = require("./routes/user");
+const lecture = require("./routes/lecture");
+const session = require("./routes/session");
+const topic = require("./routes/topic");
+const quiz = require("./routes/quiz");
 
-app.listen(PORT, () => {
-	console.log(`Listening on port ${PORT} in ${ENV} mode`);
-});
+app.use(morgan("dev"));
+app.use("/api/user", user(db));
+app.use("/api/lecture", lecture(db));
+app.use("/api/session", session(db));
+app.use("/api/topic", topic(db));
+app.use("/api/quiz", quiz(db));
 
 module.exports = app;
