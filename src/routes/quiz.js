@@ -121,10 +121,12 @@ module.exports = db => {
       UPDATE quiz_questions
       SET question = $4
       WHERE quiz_questions.quiz_card_id = $3
+      ON CONFILCT DO NOTHING
 
       UPDATE quiz_answers
       SET answer = $5, correct = $6
       WHERE quiz_answers.quiz_question_id = $7
+      ON CONFILCT DO NOTHING
 
       RETURNING *;
     `,
@@ -147,3 +149,18 @@ module.exports = db => {
 
 	return router;
 };
+
+// INSERT INTO topic_cards (
+//   id,
+//   lecture_id,
+//   title,
+//   description,
+//   position
+// )
+
+// VALUES (NULL, 1, 'null test', 'a test', 8)
+
+// ON CONFLICT (id) DO
+// UPDATE SET title = 'null test', description = 'a test', position = 8
+// WHERE topic_cards.id = NULL
+// RETURNING *;

@@ -32,7 +32,7 @@ module.exports = db => {
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
-		).then(({ rows: responses }) => res.json(responses));
+		).then(({ rows: user }) => res.json(user));
 	});
 
 	return router;

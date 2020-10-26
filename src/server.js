@@ -19,3 +19,14 @@ app.use("/api/quiz", quiz(db));
 if (ENV === "development" || ENV === "test") {
 	app.use("/api/db", dbRoutes(db));
 }
+
+// What about starting a session?
+
+// Client makes post request
+// ie: /api/lecture/new
+// When resolving the promise for db query
+// I want the new records data and I want to send it to all clients
+// wss.send.toAllClients((type, data));
+// With type of data being changed and the data
+
+// What if the id is empty is that a conflict?
