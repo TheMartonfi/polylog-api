@@ -138,7 +138,10 @@ module.exports = db => {
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
 				[]
-			).then(() => updateTopicCard(null, null, null, null));
+			).then(({ rows: cards }) => {
+				const [card] = cards;
+				updateTopicCard(card.id, null, null, null);
+			});
 		});
 	});
 

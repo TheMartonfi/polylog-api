@@ -130,6 +130,7 @@ module.exports = db => {
       UPDATE quiz_cards
       SET title = $1::text, position = $2::integer
       WHERE quiz_cards.id = $3::integer
+      RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
@@ -145,12 +146,13 @@ module.exports = db => {
       UPDATE quiz_questions
       SET question = $1::text
       WHERE quiz_questions.quiz_card_id = $2::integer
+      RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
 		).then(({ rows: questions }) => {
 			const [question] = questions;
-			updateQuizQuestion(question.quiz_card_id, question.question);
+			updateQuizQuestion(question.quiz_card_id, question.id, question.question);
 		});
 	});
 
@@ -160,12 +162,18 @@ module.exports = db => {
       UPDATE quiz_answers
       SET answer = $1::text, correct = $2::boolean
       WHERE quiz_answers.quiz_question_id = $3::integer
+      RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
-			updateQuizAnswer(answer.quiz_question_id, answer.answer, answer.correct);
+			updateQuizAnswer(
+				answer.quiz_question_id,
+				answer.id,
+				answer.answer,
+				answer.correct
+			);
 		});
 	});
 
@@ -174,10 +182,14 @@ module.exports = db => {
 			`
       DELETE FROM quiz_cards
       WHERE quiz_cards.id = $1::integer
+      RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
-		).then(() => updateQuizCard(null, null, null));
+		).then(({ rows: cards }) => {
+			const [card] = cards;
+			updateQuizCard(card.id, null, null);
+		});
 	});
 
 	router.delete("/question", (req, res) => {
@@ -185,10 +197,14 @@ module.exports = db => {
 			`
       DELETE FROM quiz_questions
       WHERE quiz_questions.quiz_card_id = $1::integer
+      RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
-		).then(() => updateQuizQuestion(null, null));
+		).then(({ rows: questions }) => {
+			const [question] = questions;
+			updateQuizQuestion(question.quiz_card_id, question.id, null);
+		});
 	});
 
 	router.delete("/answer", (req, res) => {
@@ -196,10 +212,14 @@ module.exports = db => {
 			`
       DELETE FROM quiz_answers
       WHERE quiz_answers.quiz_question_id = $1::integer
+      RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
-		).then(() => updateQuizAnswer(null, null, null));
+		).then(({ rows: answers }) => {
+			const [answer] = answers;
+			updateQuizAnswer(answer.quiz_card_id, answer.id, null, null);
+		});
 	});
 
 	return router;
