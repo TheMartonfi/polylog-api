@@ -1,5 +1,4 @@
 const fs = require("fs");
-const db = require(".");
 
 const runSchemaFiles = db => {
 	const dbSchemas = `${__dirname}/schemas`;

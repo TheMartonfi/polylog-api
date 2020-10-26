@@ -32,7 +32,7 @@ module.exports = db => {
       JOIN topic_reactions ON $1 = topic_reactions.topic_card_id
       WHERE topic_responses.topic_card_id = $1::integer
       AND topic_responses.session_id = $2::uuid
-      AND topic_reactions.session_id = $2:uuid
+      AND topic_reactions.session_id = $2::uuid
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]

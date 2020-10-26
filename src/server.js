@@ -34,19 +34,86 @@ wss.on("connection", socket => {
 // With type of data being changed and the data
 
 // PUT /topic/
-// updateTopicCard();
+const updateTopicCard = (topic_card_id, title, description, position) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "SET_TOPIC_CARD",
+					topic_card_id,
+					title,
+					description,
+					position
+				})
+			);
+		}
+	});
+};
 
 // PUT /quiz/
-// updateQuizCard();
+const updateQuizCard = (quiz_card_id, title, position) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "SET_QUIZ_CARD",
+					quiz_card_id,
+					title,
+					position
+				})
+			);
+		}
+	});
+};
 
 // POST /topic/reaction
-// updateTopicReaction();
+const updateTopicReaction = (topic_card_id, student_id, reaction) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "SET_TOPIC_REACTION",
+					topic_card_id,
+					student_id,
+					reaction
+				})
+			);
+		}
+	});
+};
 
 // POST /topic/response
-// updateTopicResponse();
+const updateTopicResponse = (topic_card_id, student_id, type, response) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "SET_TOPIC_RESPONSE",
+					topic_card_id,
+					student_id,
+					type,
+					response
+				})
+			);
+		}
+	});
+};
 
 // POST /quiz/response
-// updateQuizResponse();
+const updateQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "SET_QUIZ_RESPONSE",
+					quiz_card_id,
+					student_id,
+					quiz_answer_id
+				})
+			);
+		}
+	});
+};
 
 if (ENV === "development" || ENV === "test") {
 	app.use("/api/db", dbRoutes(db));
