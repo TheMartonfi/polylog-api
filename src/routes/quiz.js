@@ -17,7 +17,7 @@ module.exports = db => {
       FROM quiz_cards
       JOIN quiz_questions ON quiz_cards.id = quiz_questions.quiz_card_id
       JOIN quiz_answers ON quiz_questions.id = quiz_answers.quiz_question_id
-      WHERE quiz_cards.lecture_id = $1
+      WHERE quiz_cards.lecture_id = $1::integer
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[1]
@@ -35,8 +35,8 @@ module.exports = db => {
       FROM quiz_responses
       JOIN quiz_answers ON quiz_answers.id = quiz_responses.quiz_answer_id
       JOIN quiz_questions ON quiz_questions.id = quiz_answers.quiz_question_id
-      WHERE quiz_responses.quiz_card_id = $1
-      AND quiz_responses.session_id = $2
+      WHERE quiz_responses.quiz_card_id = $1::integer
+      AND quiz_responses.session_id = $2::integer
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]
@@ -52,7 +52,7 @@ module.exports = db => {
         position
       )
       
-      VALUES ($1, $2, $3)
+      VALUES ($1::integer, $2::text, $3::integer)
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
@@ -68,7 +68,7 @@ module.exports = db => {
         question
       )
       
-      VALUES ($1, $2)
+      VALUES ($1::integer, $2::text)
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
@@ -85,7 +85,7 @@ module.exports = db => {
         correct
       )
       
-      VALUES ($1, $2, $3)
+      VALUES ($1::integer, $2::text, $3::boolean)
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
@@ -103,7 +103,7 @@ module.exports = db => {
         student_id
       )
       
-      VALUES ($1, $2, $3, $4)
+      VALUES ($1::integer, $2::integer, $3::text, $4::integer)
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
@@ -115,18 +115,18 @@ module.exports = db => {
 		db.query(
 			`
       UPDATE quiz_cards
-      SET title = $1, position = $2
-      WHERE quiz_cards.id = $3
+      SET title = $1::text, position = $2::integer
+      WHERE quiz_cards.id = $3::integer
 
       UPDATE quiz_questions
-      SET question = $4
-      WHERE quiz_questions.quiz_card_id = $3
-      ON CONFILCT DO NOTHING
+      SET question = $4::text
+      WHERE quiz_questions.quiz_card_id = $3::integer
+      ON CONFLICT DO NOTHING
 
       UPDATE quiz_answers
-      SET answer = $5, correct = $6
-      WHERE quiz_answers.quiz_question_id = $7
-      ON CONFILCT DO NOTHING
+      SET answer = $5::text, correct = $6::boolean
+      WHERE quiz_answers.quiz_question_id = $7::integer
+      ON CONFLICT DO NOTHING
 
       RETURNING *;
     `,
@@ -139,7 +139,7 @@ module.exports = db => {
 		db.query(
 			`
       DELETE FROM quiz_cards
-      WHERE quiz_cards.id = $1
+      WHERE quiz_cards.id = $1::integer
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
@@ -149,18 +149,3 @@ module.exports = db => {
 
 	return router;
 };
-
-// INSERT INTO topic_cards (
-//   id,
-//   lecture_id,
-//   title,
-//   description,
-//   position
-// )
-
-// VALUES (NULL, 1, 'null test', 'a test', 8)
-
-// ON CONFLICT (id) DO
-// UPDATE SET title = 'null test', description = 'a test', position = 8
-// WHERE topic_cards.id = NULL
-// RETURNING *;

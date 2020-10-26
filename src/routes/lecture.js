@@ -9,7 +9,7 @@ module.exports = db => {
         lectures.title,
         lectures.description
       FROM lectures
-      WHERE lecturer_id = $1
+      WHERE lecturer_id = $1::integer
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[1]
@@ -25,7 +25,7 @@ module.exports = db => {
         description
       
       )
-      VALUES ($1, $2, $3)
+      VALUES ($1::integer, $2::text, $3::text)
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
@@ -36,8 +36,8 @@ module.exports = db => {
 			db.query(
 				`
         UPDATE lectures
-        SET title = $1, description = $2
-        WHERE lectures.id = $3
+        SET title = $1::text, description = $2::text
+        WHERE lectures.id = $3::integer
         RETURNING *;
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
@@ -49,7 +49,7 @@ module.exports = db => {
 			db.query(
 				`
         DELETE FROM lectures
-        WHERE lectures.id = $1
+        WHERE lectures.id = $1::integer
         RETURNING *;
       `,
 				// When the front end makes a request make it send a response that gives me the conditions

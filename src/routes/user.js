@@ -10,7 +10,7 @@ module.exports = db => {
         users.email,
         users.password
       FROM users
-      WHERE users.id = $1
+      WHERE users.id = $1::integer
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[1]
@@ -27,7 +27,7 @@ module.exports = db => {
         password
       )
       
-      VALUES ($1, $2, $3, $4)
+      VALUES ($1::text, $2::text, $3:text, $4::text)
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
