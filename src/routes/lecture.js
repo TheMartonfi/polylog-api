@@ -11,8 +11,7 @@ module.exports = db => {
       FROM lectures
       WHERE lecturer_id = $1::integer
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
-			[1]
+			[req.query.lecturer_id]
 		).then(({ rows: lectures }) => res.json(lectures));
 	});
 
