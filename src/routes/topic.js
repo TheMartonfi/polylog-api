@@ -105,7 +105,7 @@ module.exports = db => {
 				[]
 			).then(({ rows: reactions }) => {
 				const [reaction] = reactions;
-				updateTopicResponse(
+				updateTopicReaction(
 					reaction.topic_card_id,
 					reaction.student_id,
 					reaction.reaction
@@ -138,7 +138,7 @@ module.exports = db => {
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
 				[]
-			).then(({ rows: card }) => res.json(card));
+			).then(() => updateTopicCard(null, null, null, null));
 		});
 	});
 

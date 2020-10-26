@@ -1,5 +1,11 @@
 const router = require("express").Router();
 const { parseQuizCards } = require("./helpers");
+const {
+	updateQuizCard,
+	updateQuizQuestion,
+	updateQuizAnswer,
+	updateQuizResponse
+} = require("../server");
 
 module.exports = db => {
 	router.get("/", (req, res) => {
@@ -108,7 +114,14 @@ module.exports = db => {
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
-		).then(({ rows: response }) => res.json(response));
+		).then(({ rows: responses }) => {
+			const [response] = responses;
+			updateQuizResponse(
+				response.quiz_card_id,
+				response.student_id,
+				response.quiz_answer_id
+			);
+		});
 	});
 
 	router.put("/", (req, res) => {
@@ -120,7 +133,10 @@ module.exports = db => {
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
-		).then(({ rows: card }) => res.json(card));
+		).then(({ rows: cards }) => {
+			const [card] = cards;
+			updateQuizCard(card.id, card.title, card.position);
+		});
 	});
 
 	router.put("/question", (req, res) => {
@@ -132,7 +148,10 @@ module.exports = db => {
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
-		).then(({ rows: question }) => res.json(question));
+		).then(({ rows: questions }) => {
+			const [question] = questions;
+			updateQuizQuestion(question.quiz_card_id, question.question);
+		});
 	});
 
 	router.put("/answer", (req, res) => {
@@ -144,7 +163,10 @@ module.exports = db => {
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
-		).then(({ rows: answer }) => res.json(answer));
+		).then(({ rows: answers }) => {
+			const [answer] = answers;
+			updateQuizAnswer(answer.quiz_question_id, answer.answer, answer.correct);
+		});
 	});
 
 	router.delete("/", (req, res) => {
@@ -155,7 +177,29 @@ module.exports = db => {
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
-		).then(({ rows: card }) => res.json(card));
+		).then(() => updateQuizCard(null, null, null));
+	});
+
+	router.delete("/question", (req, res) => {
+		db.query(
+			`
+      DELETE FROM quiz_questions
+      WHERE quiz_questions.quiz_card_id = $1::integer
+    `,
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(() => updateQuizQuestion(null, null));
+	});
+
+	router.delete("/answer", (req, res) => {
+		db.query(
+			`
+      DELETE FROM quiz_answers
+      WHERE quiz_answers.quiz_question_id = $1::integer
+    `,
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(() => updateQuizAnswer(null, null, null));
 	});
 
 	return router;

@@ -33,6 +33,9 @@ wss.on("connection", socket => {
 // wss.send.toAllClients((type, data));
 // With type of data being changed and the data
 
+// Change db schema to allow null content for cards since we init them
+// without content and insert the content after
+
 const updateTopicCard = (topic_card_id, title, description, position) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
@@ -49,23 +52,6 @@ const updateTopicCard = (topic_card_id, title, description, position) => {
 	});
 };
 
-// PUT /quiz/
-const updateQuizCard = (quiz_card_id, title, position) => {
-	wss.clients.forEach(function eachClient(client) {
-		if (client.readyState === WebSocket.OPEN) {
-			client.send(
-				JSON.stringify({
-					type: "SET_QUIZ_CARD",
-					quiz_card_id,
-					title,
-					position
-				})
-			);
-		}
-	});
-};
-
-// POST /topic/response
 const updateTopicResponse = (topic_card_id, student_id, type, response) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
@@ -82,7 +68,6 @@ const updateTopicResponse = (topic_card_id, student_id, type, response) => {
 	});
 };
 
-// POST /topic/reaction
 const updateTopicReaction = (topic_card_id, student_id, reaction) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
@@ -98,7 +83,50 @@ const updateTopicReaction = (topic_card_id, student_id, reaction) => {
 	});
 };
 
-// POST /quiz/response
+const updateQuizCard = (quiz_card_id, title, position) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "SET_QUIZ_CARD",
+					quiz_card_id,
+					title,
+					position
+				})
+			);
+		}
+	});
+};
+
+const updateQuizQuestion = (quiz_card_id, question) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "SET_QUIZ_QUESTION",
+					quiz_card_id,
+					question
+				})
+			);
+		}
+	});
+};
+
+const updateQuizAnswer = (quiz_question_id, answer, correct) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "SET_QUIZ_ANSWER",
+					quiz_question_id,
+					answer,
+					correct
+				})
+			);
+		}
+	});
+};
+
 const updateQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
@@ -114,12 +142,6 @@ const updateQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
 	});
 };
 
-// DELETE /topic/
-// DELETE /quiz/
-// Maybe just use the functions you already made and just send no data
-// Make some flag on front end that knows how to handle null values for cards
-// and remove them
-
 if (ENV === "development" || ENV === "test") {
 	app.use("/api/db", dbRoutes(db));
 }
@@ -131,6 +153,8 @@ app.listen(PORT, () => {
 module.exports = {
 	updateTopicCard,
 	updateQuizCard,
+	updateQuizQuestion,
+	updateQuizAnswer,
 	updateTopicResponse,
 	updateTopicReaction,
 	updateQuizResponse
