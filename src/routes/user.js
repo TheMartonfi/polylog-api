@@ -23,16 +23,16 @@ module.exports = db => {
 	router.post("/", (req, res) => {
 		db.query(
 			`
-      INSERT INTO users (
-        first_name,
-        last_name,
-        email,
-        password
-      )
-      
-      VALUES ($1::text, $2::text, $3:text, $4::text)
-      RETURNING *;
-    `,
+		  INSERT INTO users (
+		    first_name,
+		    last_name,
+		    email,
+		    password
+		  )
+
+		  VALUES ($1::text, $2::text, $3::text, $4::text)
+		  RETURNING *;
+		`,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[]
 		).then(({ rows: user }) => res.json(user));
