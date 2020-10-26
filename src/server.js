@@ -33,7 +33,6 @@ wss.on("connection", socket => {
 // wss.send.toAllClients((type, data));
 // With type of data being changed and the data
 
-// PUT /topic/
 const updateTopicCard = (topic_card_id, title, description, position) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
@@ -66,22 +65,6 @@ const updateQuizCard = (quiz_card_id, title, position) => {
 	});
 };
 
-// POST /topic/reaction
-const updateTopicReaction = (topic_card_id, student_id, reaction) => {
-	wss.clients.forEach(function eachClient(client) {
-		if (client.readyState === WebSocket.OPEN) {
-			client.send(
-				JSON.stringify({
-					type: "SET_TOPIC_REACTION",
-					topic_card_id,
-					student_id,
-					reaction
-				})
-			);
-		}
-	});
-};
-
 // POST /topic/response
 const updateTopicResponse = (topic_card_id, student_id, type, response) => {
 	wss.clients.forEach(function eachClient(client) {
@@ -93,6 +76,22 @@ const updateTopicResponse = (topic_card_id, student_id, type, response) => {
 					student_id,
 					type,
 					response
+				})
+			);
+		}
+	});
+};
+
+// POST /topic/reaction
+const updateTopicReaction = (topic_card_id, student_id, reaction) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "SET_TOPIC_REACTION",
+					topic_card_id,
+					student_id,
+					reaction
 				})
 			);
 		}
@@ -115,6 +114,12 @@ const updateQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
 	});
 };
 
+// DELETE /topic/
+// DELETE /quiz/
+// Maybe just use the functions you already made and just send no data
+// Make some flag on front end that knows how to handle null values for cards
+// and remove them
+
 if (ENV === "development" || ENV === "test") {
 	app.use("/api/db", dbRoutes(db));
 }
@@ -122,3 +127,11 @@ if (ENV === "development" || ENV === "test") {
 app.listen(PORT, () => {
 	console.log(`Listening on port ${PORT} in ${ENV} mode`);
 });
+
+module.exports = {
+	updateTopicCard,
+	updateQuizCard,
+	updateTopicResponse,
+	updateTopicReaction,
+	updateQuizResponse
+};

@@ -1,5 +1,10 @@
 const router = require("express").Router();
 const { parseTopicResponses } = require("./helpers");
+const {
+	updateTopicCard,
+	updateTopicResponse,
+	updateTopicReaction
+} = require("../server");
 
 module.exports = db => {
 	router.get("/", (req, res) => {
@@ -72,7 +77,15 @@ module.exports = db => {
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
 				[]
-			).then(({ rows: response }) => res.json(response));
+			).then(({ rows: responses }) => {
+				const [response] = responses;
+				updateTopicResponse(
+					response.topic_card_id,
+					response.student_id,
+					response.type,
+					response.response
+				);
+			});
 		});
 
 		router.post("/reaction", (req, res) => {
@@ -90,7 +103,14 @@ module.exports = db => {
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
 				[]
-			).then(({ rows: reaction }) => res.json(reaction));
+			).then(({ rows: reactions }) => {
+				const [reaction] = reactions;
+				updateTopicResponse(
+					reaction.topic_card_id,
+					reaction.student_id,
+					reaction.reaction
+				);
+			});
 		});
 
 		router.put("/", (req, res) => {
@@ -103,7 +123,10 @@ module.exports = db => {
       `,
 				// When the front end makes a request make it send a response that gives me the conditions
 				[]
-			).then(({ rows: card }) => res.json(card));
+			).then(({ rows: cards }) => {
+				const [card] = cards;
+				updateTopicCard(card.id, card.title, card.description, card.position);
+			});
 		});
 
 		router.delete("/", (req, res) => {

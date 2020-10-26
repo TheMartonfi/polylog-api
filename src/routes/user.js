@@ -14,7 +14,10 @@ module.exports = db => {
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[1]
-		).then(({ rows: user }) => res.json(user[0]));
+		).then(({ rows: users }) => {
+			const [user] = users;
+			res.json(user);
+		});
 	});
 
 	router.post("/", (req, res) => {
