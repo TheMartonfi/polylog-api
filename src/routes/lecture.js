@@ -41,8 +41,8 @@ module.exports = db => {
         RETURNING *;
       `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
-		).then(({ rows: lecture }) => res.json(lecture));
+			[req.body.title, req.body.description, req.body.lecture_id]
+		).then(() => res.status(204).json({}));
 	});
 
 	router.delete("/", (req, res) => {
