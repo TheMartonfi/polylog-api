@@ -7,7 +7,7 @@ const {
 } = require("../ws");
 
 module.exports = db => {
-	router.get("/:id", (req, res) => {
+	router.get("/card/:id", (req, res) => {
 		db.query(
 			`
 			SELECT
@@ -139,7 +139,7 @@ module.exports = db => {
 		});
 	});
 
-	router.put("/:id", (req, res) => {
+	router.put("/card/:id", (req, res) => {
 		db.query(
 			`
         UPDATE topic_cards
@@ -155,12 +155,12 @@ module.exports = db => {
 		});
 	});
 
-	router.delete("/:id", (req, res) => {
+	router.delete("/card/:id", (req, res) => {
 		db.query(
 			`
         DELETE FROM topic_cards
         WHERE topic_cards.id = $1::integer
-        RETURNING *;
+        RETURNING topic_cards.id;
       `,
 			[req.params.id]
 		).then(({ rows: cards }) => {

@@ -8,7 +8,7 @@ const {
 } = require("../ws");
 
 module.exports = db => {
-	router.get("/:id", (req, res) => {
+	router.get("/card/:id", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -135,7 +135,7 @@ module.exports = db => {
 		});
 	});
 
-	router.put("/:id", (req, res) => {
+	router.put("/card/:id", (req, res) => {
 		db.query(
 			`
       UPDATE quiz_cards
@@ -205,18 +205,18 @@ module.exports = db => {
 		});
 	});
 
-	router.delete("/:id", (req, res) => {
+	router.delete("/card/:id", (req, res) => {
 		db.query(
 			`
       DELETE FROM quiz_cards
       WHERE quiz_cards.id = $1::integer
-      RETURNING *;
+      RETURNING quiz_cards.id;
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
 			updateQuizCard(card.id, null, null);
+			res.status(204).json({});
 		});
 	});
 
