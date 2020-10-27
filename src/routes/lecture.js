@@ -32,7 +32,7 @@ module.exports = db => {
 		).then(() => res.status(204).json({}));
 	});
 
-	router.put("/", (req, res) => {
+	router.put("/:id", (req, res) => {
 		db.query(
 			`
         UPDATE lectures
@@ -41,11 +41,11 @@ module.exports = db => {
         RETURNING *;
       `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[req.body.title, req.body.description, req.body.lecture_id]
+			[req.body.title, req.body.description, req.params.id]
 		).then(() => res.status(204).json({}));
 	});
 
-	router.delete("/", (req, res) => {
+	router.delete("/:id", (req, res) => {
 		db.query(
 			`
         DELETE FROM lectures
@@ -53,7 +53,7 @@ module.exports = db => {
         RETURNING *;
       `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
+			[req.params.id]
 		).then(({ rows: lecture }) => res.json(lecture));
 	});
 
