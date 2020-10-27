@@ -12,7 +12,6 @@ const session = require("./routes/session");
 const topic = require("./routes/topic");
 const quiz = require("./routes/quiz");
 
-// For url name get, puts and delete maybe include :id?
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));

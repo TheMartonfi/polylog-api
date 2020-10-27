@@ -4,7 +4,7 @@ const {
 	updateTopicCard,
 	updateTopicResponse,
 	updateTopicReaction
-} = require("../server");
+} = require("../ws");
 
 module.exports = db => {
 	router.get("/:id", (req, res) => {
@@ -38,7 +38,6 @@ module.exports = db => {
       AND topic_responses.session_id = $2::uuid
       AND topic_reactions.session_id = $2::uuid
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]
 		).then(({ rows: responses }) => res.json(parseTopicResponses(responses)));
 	});
@@ -57,7 +56,6 @@ module.exports = db => {
         VALUES ($1::integer, $2::text, $3::text, $4::integer)
         RETURNING topic_cards.id;
       `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[
 				req.body.lecture_id,
 				req.body.title,
@@ -84,7 +82,6 @@ module.exports = db => {
         VALUES ($1::integer, $2::uuid, $3::integer, $4::text, $5::text)
         RETURNING *;
       `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[
 				req.body.topic_card_id,
 				req.body.session_id,
@@ -117,7 +114,6 @@ module.exports = db => {
         VALUES ($1::integer, $2::uuid, $3::integer, $4::boolean)
         RETURNING *;
       `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[
 				req.body.topic_card_id,
 				req.body.session_id,
@@ -143,11 +139,11 @@ module.exports = db => {
         WHERE topic_cards.id = $4::integer
         RETURNING *;
       `,
-			// When the front end makes a request make it send a response that gives me the conditions
-			[req.params.id]
+			[req.body.title, req.body.description, req.body.position, req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
 			updateTopicCard(card.id, card.title, card.description, card.position);
+			res.status(204).json({});
 		});
 	});
 
@@ -158,11 +154,11 @@ module.exports = db => {
         WHERE topic_cards.id = $1::integer
         RETURNING *;
       `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
 			updateTopicCard(card.id, null, null, null);
+			res.status(204).json({});
 		});
 	});
 
