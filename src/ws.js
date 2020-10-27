@@ -117,6 +117,7 @@ const updateQuizQuestion = (quiz_card_id, quiz_question_id, question) => {
 };
 
 const updateQuizAnswer = (
+	quiz_card_id,
 	quiz_question_id,
 	quiz_answer_id,
 	answer,
@@ -127,6 +128,7 @@ const updateQuizAnswer = (
 			client.send(
 				JSON.stringify({
 					type: "SET_QUIZ_ANSWER",
+					quiz_card_id,
 					quiz_question_id,
 					quiz_answer_id,
 					answer,

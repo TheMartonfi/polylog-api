@@ -89,14 +89,20 @@ module.exports = db => {
 	router.post("/answer", (req, res) => {
 		db.query(
 			`
-      INSERT INTO quiz_answers (
-        quiz_question_id,
-        answer,
-        correct
-      )
-      
-      VALUES ($1::integer, $2::text, $3::boolean)
-      RETURNING quiz_answers.id;
+			WITH inserted AS (
+				INSERT INTO quiz_answers (
+					quiz_question_id,
+					answer,
+					correct
+					)
+					
+				VALUES ($1::integer, $2::text, $3::boolean)
+				RETURNING quiz_answers.id, quiz_answers.quiz_question_id)
+			
+			SELECT inserted.id, quiz_questions.quiz_card_id
+			FROM inserted
+			JOIN quiz_questions ON quiz_questions.id = inserted.quiz_question_id
+			LIMIT 1;
     `,
 			[req.body.quiz_question_id, req.body.answer, req.body.correct]
 		).then(({ rows: answers }) => {
@@ -165,16 +171,27 @@ module.exports = db => {
 	router.put("/answer/:id", (req, res) => {
 		db.query(
 			`
-      UPDATE quiz_answers
-      SET answer = $1::text, correct = $2::boolean
-      WHERE quiz_answers.quiz_question_id = $3::integer
-      RETURNING *;
+			WITH updated AS (UPDATE quiz_answers
+				SET answer = $1::text, correct = $2::boolean
+				FROM (SELECT quiz_questions.quiz_card_id
+					FROM quiz_answers
+					JOIN quiz_questions ON quiz_questions.id = quiz_answers.quiz_question_id)
+				AS quiz_questions
+				WHERE quiz_answers.quiz_question_id = $3::integer
+				RETURNING
+					quiz_questions.quiz_card_id,
+					quiz_answers.quiz_question_id,
+					quiz_answers.answer,
+					quiz_answers.correct)
+			SELECT * FROM updated
+			LIMIT 1;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
 			[req.params.id]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
 			updateQuizAnswer(
+				answer.quiz_card_id,
 				answer.quiz_question_id,
 				answer.id,
 				answer.answer,
