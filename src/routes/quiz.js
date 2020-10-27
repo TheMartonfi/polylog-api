@@ -96,9 +96,12 @@ module.exports = db => {
 					)
 					
 				VALUES ($1::integer, $2::text, $3::boolean)
-				RETURNING quiz_answers.id, quiz_answers.quiz_question_id)
+				RETURNING quiz_answers.id, quiz_answers.quiz_question_id
+			)
 			
-			SELECT inserted.id, quiz_questions.quiz_card_id
+			SELECT
+				quiz_questions.quiz_card_id,
+				inserted.id
 			FROM inserted
 			JOIN quiz_questions ON quiz_questions.id = inserted.quiz_question_id
 			LIMIT 1;
@@ -176,18 +179,22 @@ module.exports = db => {
 	router.put("/answer/:id", (req, res) => {
 		db.query(
 			`
-			WITH updated AS (UPDATE quiz_answers
+			WITH updated AS (
+				UPDATE quiz_answers
 				SET answer = $1::text, correct = $2::boolean
-				FROM (SELECT quiz_questions.quiz_card_id
+				FROM (
+					SELECT quiz_questions.quiz_card_id
 					FROM quiz_answers
-					JOIN quiz_questions ON quiz_questions.id = quiz_answers.quiz_question_id)
+					JOIN quiz_questions ON quiz_questions.id = quiz_answers.quiz_question_id
+				)
 				AS quiz_questions
 				WHERE quiz_answers.id = $3::integer
 				RETURNING
 					quiz_questions.quiz_card_id,
 					quiz_answers.quiz_question_id,
 					quiz_answers.answer,
-					quiz_answers.correct)
+					quiz_answers.correct
+			)
 			SELECT * FROM updated
 			LIMIT 1;
     `,
@@ -224,29 +231,45 @@ module.exports = db => {
 		db.query(
 			`
       DELETE FROM quiz_questions
-      WHERE quiz_questions.quiz_card_id = $1::integer
+      WHERE quiz_questions.id = $1::integer
       RETURNING *;
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[req.params.id]
 		).then(({ rows: questions }) => {
 			const [question] = questions;
 			updateQuizQuestion(question.quiz_card_id, question.id, null);
+			res.json(question);
 		});
 	});
 
 	router.delete("/answer/:id", (req, res) => {
 		db.query(
 			`
-      DELETE FROM quiz_answers
-      WHERE quiz_answers.quiz_question_id = $1::integer
-      RETURNING *;
+			WITH deleted AS (
+				DELETE FROM quiz_answers
+				WHERE quiz_answers.id = $1::integer
+				RETURNING quiz_answers.quiz_question_id, quiz_answers.id
+			)
+			
+			SELECT
+				quiz_questions.quiz_card_id,
+				deleted.quiz_question_id,
+				deleted.id
+			FROM deleted
+			JOIN quiz_questions ON quiz_questions.id = deleted.quiz_question_id
+			LIMIT 1;
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[req.params.id]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
-			updateQuizAnswer(answer.quiz_card_id, answer.id, null, null);
+			updateQuizAnswer(
+				answer.quiz_card_id,
+				answer.quiz_question_id,
+				answer.id,
+				null,
+				null
+			);
+			res.json(answer);
 		});
 	});
 
