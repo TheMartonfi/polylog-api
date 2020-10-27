@@ -159,7 +159,7 @@ module.exports = db => {
 			`
       UPDATE quiz_questions
       SET question = $1::text
-      WHERE quiz_questions.quiz_card_id = $2::integer
+      WHERE quiz_questions.id = $2::integer
 			RETURNING
 				quiz_questions.quiz_card_id,
 				quiz_questions.id,
@@ -182,7 +182,7 @@ module.exports = db => {
 					FROM quiz_answers
 					JOIN quiz_questions ON quiz_questions.id = quiz_answers.quiz_question_id)
 				AS quiz_questions
-				WHERE quiz_answers.quiz_question_id = $3::integer
+				WHERE quiz_answers.id = $3::integer
 				RETURNING
 					quiz_questions.quiz_card_id,
 					quiz_answers.quiz_question_id,
@@ -191,8 +191,7 @@ module.exports = db => {
 			SELECT * FROM updated
 			LIMIT 1;
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
-			[req.params.id]
+			[req.body.answer, req.body.correct, req.params.id]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
 			updateQuizAnswer(
@@ -202,6 +201,7 @@ module.exports = db => {
 				answer.answer,
 				answer.correct
 			);
+			res.json(answer);
 		});
 	});
 
