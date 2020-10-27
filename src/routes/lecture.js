@@ -27,9 +27,11 @@ module.exports = db => {
 		  VALUES ($1::integer, $2::text, $3::text)
 		  RETURNING *;
 		`,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[req.body.lecturer_id, req.body.title, req.body.description]
-		).then(() => res.status(204).json({}));
+		).then(({ rows: lectures }) => {
+			const [lecture] = lectures;
+			res.json(lecture);
+		});
 	});
 
 	router.put("/:id", (req, res) => {
@@ -38,9 +40,7 @@ module.exports = db => {
         UPDATE lectures
         SET title = $1::text, description = $2::text
         WHERE lectures.id = $3::integer
-        RETURNING *;
       `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[req.body.title, req.body.description, req.params.id]
 		).then(() => res.status(204).json({}));
 	});
@@ -50,11 +50,9 @@ module.exports = db => {
 			`
         DELETE FROM lectures
         WHERE lectures.id = $1::integer
-        RETURNING *;
       `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[req.params.id]
-		).then(({ rows: lecture }) => res.json(lecture));
+		).then(() => res.status(204).json({}));
 	});
 
 	return router;
