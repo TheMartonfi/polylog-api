@@ -13,7 +13,7 @@ module.exports = db => {
 			`
       SELECT
         quiz_cards.id,
-        quiz_answers.quiz_question_id,
+        quiz_questions.id AS quiz_question_id,
         quiz_answers.id AS quiz_answer_id,
         quiz_cards.title,
         quiz_questions.question,
@@ -60,7 +60,6 @@ module.exports = db => {
       VALUES ($1::integer, $2::text, $3::integer)
       RETURNING quiz_cards.id;
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[req.body.lecture_id, req.body.title, req.body.position]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
@@ -77,11 +76,14 @@ module.exports = db => {
       )
       
       VALUES ($1::integer, $2::text)
-      RETURNING *;
+      RETURNING quiz_questions.id;
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
-			[]
-		).then(({ rows: question }) => res.json(question));
+			[req.body.quiz_card_id, req.body.question]
+		).then(({ rows: questions }) => {
+			const [question] = questions;
+			console.log(question);
+			res.json(question);
+		});
 	});
 
 	router.post("/answer", (req, res) => {
