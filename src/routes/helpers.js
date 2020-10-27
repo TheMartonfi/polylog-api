@@ -56,47 +56,35 @@ const parseQuizCards = cards => {
 };
 
 const parseTopicResponses = responses => {
-	const parsedResponses = {};
+	const parsedResponses = { responses: [], reactions: [] };
 
 	responses.forEach(response => {
-		if (!parsedResponses.responses && !parsedResponses.reactions) {
-			parsedResponses["responses"] = [
-				{
-					type: response.type,
-					response: response.response
-				}
-			];
-			parsedResponses["reactions"] = [
-				{
-					student_id: response.student_id,
-					reaction: response.reaction
-				}
-			];
-		} else {
-			const findParsedResponse = parsedResponses.responses.find(res => {
-				if (res.response_id === response.topic_response_id) {
-					return res;
-				}
-			});
-			const findParsedReaction = parsedResponses.reactions.find(reaction => {
-				if (reaction.reaction_id === response.topic_reaction_id) {
-					return reaction;
-				}
-			});
-
-			if (findParsedResponse === undefined) {
-				parsedResponses.responses.push({
-					type: response.type,
-					response: response.response
-				});
+		const findParsedResponse = parsedResponses.responses.find(res => {
+			if (res.response_id === response.topic_response_id) {
+				return res;
 			}
+		});
 
-			if (findParsedReaction === undefined) {
-				parsedResponses.reactions.push({
-					student_id: response.student_id,
-					reaction: response.reaction
-				});
+		const findParsedReaction = parsedResponses.reactions.find(reaction => {
+			if (reaction.reaction_id === response.topic_reaction_id) {
+				return reaction;
 			}
+		});
+
+		if (findParsedResponse === undefined) {
+			parsedResponses.responses.push({
+				response_id: response.topic_response_id,
+				type: response.type,
+				response: response.response
+			});
+		}
+
+		if (findParsedReaction === undefined) {
+			parsedResponses.reactions.push({
+				reaction_id: response.topic_reaction_id,
+				student_id: response.student_id,
+				reaction: response.reaction
+			});
 		}
 	});
 

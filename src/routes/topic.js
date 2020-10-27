@@ -18,12 +18,11 @@ module.exports = db => {
 			FROM topic_cards
       WHERE topic_cards.lecture_id = $1::integer
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[req.params.id]
 		).then(({ rows: cards }) => res.json(cards));
 	});
 
-	router.get("/responses/:id", (req, res) => {
+	router.get("/responses/:uuid", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -40,7 +39,7 @@ module.exports = db => {
       AND topic_reactions.session_id = $2::uuid
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[req.params.id, "4a115ab1-c845-412a-b868-531cf505bf45"]
+			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]
 		).then(({ rows: responses }) => res.json(parseTopicResponses(responses)));
 
 		router.post("/card", (req, res) => {
