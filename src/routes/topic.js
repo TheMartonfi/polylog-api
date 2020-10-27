@@ -41,10 +41,12 @@ module.exports = db => {
 			// When the front end makes a request make it send a response that gives me the conditions
 			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]
 		).then(({ rows: responses }) => res.json(parseTopicResponses(responses)));
+	});
 
-		router.post("/card", (req, res) => {
-			db.query(
-				`
+	router.post("/card", (req, res) => {
+		console.log(req.body);
+		db.query(
+			`
         INSERT INTO topic_cards (
           lecture_id,
           title,
@@ -53,16 +55,24 @@ module.exports = db => {
         )
 
         VALUES ($1::integer, $2::text, $3::text, $4::integer)
-        RETURNING *;
+        RETURNING topic_cards.id;
       `,
-				// When the front end makes a request make it send a response that gives me the conditions
-				[]
-			).then(({ rows: card }) => res.json(card));
+			// When the front end makes a request make it send a response that gives me the conditions
+			[
+				req.body.lecture_id,
+				req.body.title,
+				req.body.description,
+				req.body.position
+			]
+		).then(({ rows: cards }) => {
+			const [card] = cards;
+			res.json(card);
 		});
+	});
 
-		router.post("/response", (req, res) => {
-			db.query(
-				`
+	router.post("/response", (req, res) => {
+		db.query(
+			`
         INSERT INTO topic_responses (
           topic_card_id,
           session_id,
@@ -74,22 +84,22 @@ module.exports = db => {
         VALUES ($1::integer, $2::uuid, $3::integer, $4::text, $5::text)
         RETURNING *;
       `,
-				// When the front end makes a request make it send a response that gives me the conditions
-				[]
-			).then(({ rows: responses }) => {
-				const [response] = responses;
-				updateTopicResponse(
-					response.topic_card_id,
-					response.student_id,
-					response.type,
-					response.response
-				);
-			});
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(({ rows: responses }) => {
+			const [response] = responses;
+			updateTopicResponse(
+				response.topic_card_id,
+				response.student_id,
+				response.type,
+				response.response
+			);
 		});
+	});
 
-		router.post("/reaction", (req, res) => {
-			db.query(
-				`
+	router.post("/reaction", (req, res) => {
+		db.query(
+			`
         INSERT INTO topic_reactions (
           topic_card_id,
           session_id,
@@ -100,47 +110,46 @@ module.exports = db => {
         VALUES ($1::integer, $2::uuid, $3::integer, $4::boolean)
         RETURNING *;
       `,
-				// When the front end makes a request make it send a response that gives me the conditions
-				[]
-			).then(({ rows: reactions }) => {
-				const [reaction] = reactions;
-				updateTopicReaction(
-					reaction.topic_card_id,
-					reaction.student_id,
-					reaction.reaction
-				);
-			});
+			// When the front end makes a request make it send a response that gives me the conditions
+			[]
+		).then(({ rows: reactions }) => {
+			const [reaction] = reactions;
+			updateTopicReaction(
+				reaction.topic_card_id,
+				reaction.student_id,
+				reaction.reaction
+			);
 		});
+	});
 
-		router.put("/:id", (req, res) => {
-			db.query(
-				`
+	router.put("/:id", (req, res) => {
+		db.query(
+			`
         UPDATE topic_cards
         SET title = $1::text, description = $2::text, position = $3::integer
         WHERE topic_cards.id = $4::integer
         RETURNING *;
       `,
-				// When the front end makes a request make it send a response that gives me the conditions
-				[req.params.id]
-			).then(({ rows: cards }) => {
-				const [card] = cards;
-				updateTopicCard(card.id, card.title, card.description, card.position);
-			});
+			// When the front end makes a request make it send a response that gives me the conditions
+			[req.params.id]
+		).then(({ rows: cards }) => {
+			const [card] = cards;
+			updateTopicCard(card.id, card.title, card.description, card.position);
 		});
+	});
 
-		router.delete("/:id", (req, res) => {
-			db.query(
-				`
+	router.delete("/:id", (req, res) => {
+		db.query(
+			`
         DELETE FROM topic_cards
         WHERE topic_cards.id = $1::integer
         RETURNING *;
       `,
-				// When the front end makes a request make it send a response that gives me the conditions
-				[req.params.id]
-			).then(({ rows: cards }) => {
-				const [card] = cards;
-				updateTopicCard(card.id, null, null, null);
-			});
+			// When the front end makes a request make it send a response that gives me the conditions
+			[req.params.id]
+		).then(({ rows: cards }) => {
+			const [card] = cards;
+			updateTopicCard(card.id, null, null, null);
 		});
 	});
 
