@@ -81,7 +81,6 @@ module.exports = db => {
 			[req.body.quiz_card_id, req.body.question]
 		).then(({ rows: questions }) => {
 			const [question] = questions;
-			console.log(question);
 			res.json(question);
 		});
 	});
@@ -161,13 +160,16 @@ module.exports = db => {
       UPDATE quiz_questions
       SET question = $1::text
       WHERE quiz_questions.quiz_card_id = $2::integer
-      RETURNING *;
+			RETURNING
+				quiz_questions.quiz_card_id,
+				quiz_questions.id,
+				quiz_questions.question;
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
-			[req.params.id]
+			[req.body.question, req.params.id]
 		).then(({ rows: questions }) => {
 			const [question] = questions;
 			updateQuizQuestion(question.quiz_card_id, question.id, question.question);
+			res.json(question);
 		});
 	});
 
