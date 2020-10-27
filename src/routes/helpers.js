@@ -2,21 +2,23 @@ const parseQuizCards = cards => {
 	const parsedCards = [];
 
 	cards.forEach(card => {
-		const id = card.quiz_card_id;
 		const question_id = card.quiz_question_id;
-		let findParsedCard = parsedCards.find(card => card.id === id);
-
+		let findParsedCard = parsedCards.find(
+			currentCard => currentCard.id === card.id
+		);
+		// If a card has no questions or answers
+		// It still adds one question/answer with all null values
 		if (findParsedCard === undefined) {
 			parsedCards.push({
-				id,
+				id: card.id,
 				title: card.title,
 				content: [
 					{
-						question_id,
+						id: question_id,
 						question: card.question,
 						answers: [
 							{
-								answer_id: card.quiz_answer_id,
+								id: card.quiz_answer_id,
 								answer: card.answer,
 								correct: card.correct
 							}
@@ -27,16 +29,16 @@ const parseQuizCards = cards => {
 			});
 		} else {
 			const findQuestion = findParsedCard.content.find(
-				content => content.question_id === question_id
+				content => content.id === question_id
 			);
 
 			if (findQuestion === undefined) {
 				findParsedCard.content.push({
-					question_id,
+					id: question_id,
 					question: card.question,
 					answers: [
 						{
-							answer_id: card.quiz_answer_id,
+							id: card.quiz_answer_id,
 							answer: card.answer,
 							correct: card.correct
 						}
@@ -44,7 +46,7 @@ const parseQuizCards = cards => {
 				});
 			} else {
 				findQuestion.answers.push({
-					answer_id: card.quiz_answer_id,
+					id: card.quiz_answer_id,
 					answer: card.answer,
 					correct: card.correct
 				});

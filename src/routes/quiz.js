@@ -12,7 +12,7 @@ module.exports = db => {
 		db.query(
 			`
       SELECT
-        quiz_questions.quiz_card_id,
+        quiz_cards.id,
         quiz_answers.quiz_question_id,
         quiz_answers.id AS quiz_answer_id,
         quiz_cards.title,
@@ -21,16 +21,15 @@ module.exports = db => {
         quiz_answers.correct,
         quiz_cards.position
       FROM quiz_cards
-      JOIN quiz_questions ON quiz_cards.id = quiz_questions.quiz_card_id
-      JOIN quiz_answers ON quiz_questions.id = quiz_answers.quiz_question_id
+      LEFT JOIN quiz_questions ON quiz_cards.id = quiz_questions.quiz_card_id
+      LEFT JOIN quiz_answers ON quiz_questions.id = quiz_answers.quiz_question_id
       WHERE quiz_cards.lecture_id = $1::integer
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
 			[req.params.id]
 		).then(({ rows: cards }) => res.json(parseQuizCards(cards)));
 	});
 
-	router.get("/responses/:id", (req, res) => {
+	router.get("/responses/:uuid", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -45,7 +44,7 @@ module.exports = db => {
       AND quiz_responses.session_id = $2::uuid
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[req.params.id, "4a115ab1-c845-412a-b868-531cf505bf45"]
+			[req.query.id, "4a115ab1-c845-412a-b868-531cf505bf45"]
 		).then(({ rows: responses }) => res.json(responses));
 	});
 
@@ -59,11 +58,14 @@ module.exports = db => {
       )
       
       VALUES ($1::integer, $2::text, $3::integer)
-      RETURNING *;
+      RETURNING quiz_cards.id;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
-		).then(({ rows: card }) => res.json(card));
+			[req.body.lecture_id, req.body.title, req.body.position]
+		).then(({ rows: cards }) => {
+			const [card] = cards;
+			res.json(card);
+		});
 	});
 
 	router.post("/question", (req, res) => {
