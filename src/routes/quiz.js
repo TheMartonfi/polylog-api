@@ -5,7 +5,7 @@ const {
 	updateQuizQuestion,
 	updateQuizAnswer,
 	updateQuizResponse
-} = require("../server");
+} = require("../ws");
 
 module.exports = db => {
 	router.get("/:id", (req, res) => {
@@ -142,13 +142,16 @@ module.exports = db => {
       UPDATE quiz_cards
       SET title = $1::text, position = $2::integer
       WHERE quiz_cards.id = $3::integer
-      RETURNING *;
+			RETURNING
+				quiz_cards.id,
+				quiz_cards.title,
+				quiz_cards.position;
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
-			[req.params.id]
+			[req.body.title, req.body.position, req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
 			updateQuizCard(card.id, card.title, card.position);
+			res.status(204).json({});
 		});
 	});
 
