@@ -25,20 +25,20 @@ module.exports = db => {
 	router.get("/responses/:uuid", (req, res) => {
 		db.query(
 			`
-      SELECT
-        topic_responses.id AS topic_response_id,
-        topic_responses.type,
-        topic_responses.response,
-        topic_reactions.student_id,
-        topic_reactions.id AS topic_reaction_id,
-        topic_reactions.reaction
-      FROM topic_responses
-      JOIN topic_reactions ON $1 = topic_reactions.topic_card_id
-      WHERE topic_responses.topic_card_id = $1::integer
-      AND topic_responses.session_id = $2::uuid
-      AND topic_reactions.session_id = $2::uuid
-    `,
-			[1, "4a115ab1-c845-412a-b868-531cf505bf45"]
+		  SELECT
+		    topic_responses.id AS topic_response_id,
+		    topic_responses.type,
+		    topic_responses.response,
+		    topic_reactions.student_id,
+		    topic_reactions.id AS topic_reaction_id,
+		    topic_reactions.reaction
+		  FROM topic_responses
+		  JOIN topic_reactions ON $1 = topic_reactions.topic_card_id
+		  WHERE topic_responses.topic_card_id = $1::integer
+		  AND topic_responses.session_id = $2::uuid
+		  AND topic_reactions.session_id = $2::uuid
+		`,
+			[req.query.id, req.params.uuid]
 		).then(({ rows: responses }) => res.json(parseTopicResponses(responses)));
 	});
 
@@ -79,8 +79,11 @@ module.exports = db => {
           response
         )
         
-        VALUES ($1::integer, $2::uuid, $3::integer, $4::text, $5::text)
-        RETURNING *;
+				VALUES ($1::integer, $2::uuid, $3::integer, $4::text, $5::text)
+				RETURNING
+					topic_responses.id,
+					topic_responses.type,
+					topic_responses.response;
       `,
 			[
 				req.body.topic_card_id,
@@ -98,6 +101,7 @@ module.exports = db => {
 				response.type,
 				response.response
 			);
+			res.json(response);
 		});
 	});
 
@@ -112,7 +116,10 @@ module.exports = db => {
         )
         
         VALUES ($1::integer, $2::uuid, $3::integer, $4::boolean)
-        RETURNING *;
+				RETURNING
+					topic_reactions.id,
+					topic_reactions.student_id,
+					topic_reactions.reaction;
       `,
 			[
 				req.body.topic_card_id,
@@ -128,6 +135,7 @@ module.exports = db => {
 				reaction.student_id,
 				reaction.reaction
 			);
+			res.json(reaction);
 		});
 	});
 

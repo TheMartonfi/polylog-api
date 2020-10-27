@@ -60,20 +60,20 @@ const parseTopicResponses = responses => {
 
 	responses.forEach(response => {
 		const findParsedResponse = parsedResponses.responses.find(res => {
-			if (res.response_id === response.topic_response_id) {
+			if (res.id === response.topic_response_id) {
 				return res;
 			}
 		});
 
 		const findParsedReaction = parsedResponses.reactions.find(reaction => {
-			if (reaction.reaction_id === response.topic_reaction_id) {
+			if (reaction.id === response.topic_reaction_id) {
 				return reaction;
 			}
 		});
 
 		if (findParsedResponse === undefined) {
 			parsedResponses.responses.push({
-				response_id: response.topic_response_id,
+				id: response.topic_response_id,
 				type: response.type,
 				response: response.response
 			});
@@ -81,7 +81,7 @@ const parseTopicResponses = responses => {
 
 		if (findParsedReaction === undefined) {
 			parsedResponses.reactions.push({
-				reaction_id: response.topic_reaction_id,
+				id: response.topic_reaction_id,
 				student_id: response.student_id,
 				reaction: response.reaction
 			});
