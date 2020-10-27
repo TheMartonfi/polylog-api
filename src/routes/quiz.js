@@ -96,11 +96,13 @@ module.exports = db => {
       )
       
       VALUES ($1::integer, $2::text, $3::boolean)
-      RETURNING *;
+      RETURNING quiz_answers.id;
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
-			[]
-		).then(({ rows: answer }) => res.json(answer));
+			[req.body.quiz_question_id, req.body.answer, req.body.correct]
+		).then(({ rows: answers }) => {
+			const [answer] = answers;
+			res.json(answer);
+		});
 	});
 
 	router.post("/response", (req, res) => {
