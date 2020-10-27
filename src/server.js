@@ -49,12 +49,19 @@ const updateTopicCard = (topic_card_id, title, description, position) => {
 	});
 };
 
-const updateTopicResponse = (topic_card_id, student_id, type, response) => {
+const updateTopicResponse = (
+	topic_response_id,
+	topic_card_id,
+	student_id,
+	type,
+	response
+) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(
 				JSON.stringify({
 					type: "SET_TOPIC_RESPONSE",
+					topic_response_id,
 					topic_card_id,
 					student_id,
 					type,
@@ -65,12 +72,18 @@ const updateTopicResponse = (topic_card_id, student_id, type, response) => {
 	});
 };
 
-const updateTopicReaction = (topic_card_id, student_id, reaction) => {
+const updateTopicReaction = (
+	topic_reaction_id,
+	topic_card_id,
+	student_id,
+	reaction
+) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(
 				JSON.stringify({
 					type: "SET_TOPIC_REACTION",
+					topic_reaction_id,
 					topic_card_id,
 					student_id,
 					reaction
@@ -131,6 +144,7 @@ const updateQuizAnswer = (
 	});
 };
 
+// include quiz_response_id
 const updateQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {

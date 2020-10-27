@@ -85,10 +85,17 @@ module.exports = db => {
         RETURNING *;
       `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
+			[
+				req.body.topic_card_id,
+				req.body.session_id,
+				req.body.student_id,
+				req.body.type,
+				req.body.response
+			]
 		).then(({ rows: responses }) => {
 			const [response] = responses;
 			updateTopicResponse(
+				response.id,
 				response.topic_card_id,
 				response.student_id,
 				response.type,
@@ -115,6 +122,7 @@ module.exports = db => {
 		).then(({ rows: reactions }) => {
 			const [reaction] = reactions;
 			updateTopicReaction(
+				reaction.id,
 				reaction.topic_card_id,
 				reaction.student_id,
 				reaction.reaction
