@@ -46,6 +46,35 @@ const newTopicCard = (
 	});
 };
 
+const editTopicCard = (topic_card_id, title, description, position) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "EDIT_TOPIC_CARD",
+					topic_card_id,
+					title,
+					description,
+					position
+				})
+			);
+		}
+	});
+};
+
+const deleteTopicCard = topic_card_id => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "DELETE_TOPIC_CARD",
+					topic_card_id
+				})
+			);
+		}
+	});
+};
+
 const newTopicResponse = (
 	topic_response_id,
 	topic_card_id,
@@ -161,10 +190,12 @@ const updateQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
 
 module.exports = {
 	newTopicCard,
+	newTopicResponse,
+	newTopicReaction,
+	editTopicCard,
+	deleteTopicCard,
 	updateQuizCard,
 	updateQuizQuestion,
 	updateQuizAnswer,
-	newTopicResponse,
-	newTopicReaction,
 	updateQuizResponse
 };

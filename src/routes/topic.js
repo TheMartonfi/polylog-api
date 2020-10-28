@@ -1,6 +1,12 @@
 const router = require("express").Router();
 const { parseTopicResponses } = require("./helpers");
-const { newTopicCard, newTopicResponse, newTopicReaction } = require("../ws");
+const {
+	newTopicCard,
+	newTopicResponse,
+	newTopicReaction,
+	editTopicCard,
+	deleteTopicCard
+} = require("../ws");
 
 module.exports = db => {
 	router.get("/card/:id", (req, res) => {
@@ -153,7 +159,7 @@ module.exports = db => {
 			[req.body.title, req.body.description, req.body.position, req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
-			// editTopicCard(card.id, card.title, card.description, card.position);
+			editTopicCard(card.id, card.title, card.description, card.position);
 			res.status(204).json({});
 		});
 	});
@@ -168,8 +174,7 @@ module.exports = db => {
 			[req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
-			// Might implement this later keep for stretch
-			// newTopicCard(card.id, null, null, null);
+			deleteTopicCard(card.id);
 			res.status(204).json({});
 		});
 	});
