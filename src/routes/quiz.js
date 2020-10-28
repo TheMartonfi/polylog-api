@@ -32,10 +32,10 @@ module.exports = db => {
 	router.get("/responses/:id", (req, res) => {
 		db.query(
 			`
-      SELECT
+			SELECT
+				quiz_responses.id,
         quiz_responses.student_id,
-        quiz_answers.id AS quiz_answer_id,
-        quiz_answers.correct
+        quiz_answers.id AS quiz_answer_id
       FROM quiz_responses
       JOIN quiz_answers ON quiz_answers.id = quiz_responses.quiz_answer_id
       JOIN quiz_questions ON quiz_questions.id = quiz_answers.quiz_question_id
@@ -122,10 +122,17 @@ module.exports = db => {
       )
       
       VALUES ($1::integer, $2::integer, $3::uuid, $4::integer)
-      RETURNING *;
+			RETURNING
+				quiz_responses.id,
+				quiz_responses.quiz_answer_id,
+				quiz_responses.student_id
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
-			[]
+			[
+				req.body.quiz_card_id,
+				req.body.quiz_answer_id,
+				req.body.session_id,
+				req.body.student_id
+			]
 		).then(({ rows: responses }) => {
 			const [response] = responses;
 			updateQuizResponse(
@@ -133,6 +140,7 @@ module.exports = db => {
 				response.student_id,
 				response.quiz_answer_id
 			);
+			res.json(response);
 		});
 	});
 
