@@ -1,3 +1,4 @@
+// This is disgusting refactor this!!!!
 const parseQuizCards = cards => {
 	const parsedCards = [];
 
@@ -6,8 +7,6 @@ const parseQuizCards = cards => {
 		let findParsedCard = parsedCards.find(
 			currentCard => currentCard.id === card.id
 		);
-		// If a card has no questions or answers
-		// It still adds one question/answer with all null values
 		if (findParsedCard === undefined) {
 			if (question_id && card.quiz_answer_id) {
 				parsedCards.push({

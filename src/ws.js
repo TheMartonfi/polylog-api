@@ -1,10 +1,11 @@
-const app = require(".");
+const app = require("./server");
 const server = require("http").Server(app);
-
 const WebSocket = require("ws");
 const wss = new WebSocket.Server({ server });
 
+console.log(wss);
 wss.on("connection", socket => {
+	console.log("Websocket connected");
 	socket.onmessage = event => {
 		console.log(`Message Received: ${event.data}`);
 
