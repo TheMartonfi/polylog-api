@@ -9,24 +9,33 @@ const parseQuizCards = cards => {
 		// If a card has no questions or answers
 		// It still adds one question/answer with all null values
 		if (findParsedCard === undefined) {
-			parsedCards.push({
-				id: card.id,
-				title: card.title,
-				questions: [
-					{
-						id: question_id,
-						question: card.question,
-						answers: [
-							{
-								id: card.quiz_answer_id,
-								answer: card.answer,
-								correct: card.correct
-							}
-						]
-					}
-				],
-				position: card.position
-			});
+			if (question_id && card.quiz_answer_id) {
+				parsedCards.push({
+					id: card.id,
+					title: card.title,
+					questions: [
+						{
+							id: question_id,
+							question: card.question,
+							answers: [
+								{
+									id: card.quiz_answer_id,
+									answer: card.answer,
+									correct: card.correct
+								}
+							]
+						}
+					],
+					position: card.position
+				});
+			} else {
+				parsedCards.push({
+					id: card.id,
+					title: card.title,
+					questions: [],
+					position: card.position
+				});
+			}
 		} else {
 			const findQuestion = findParsedCard.questions.find(
 				questions => questions.id === question_id
@@ -62,15 +71,11 @@ const parseTopicResponses = responses => {
 
 	responses.forEach(response => {
 		const findParsedResponse = parsedResponses.responses.find(res => {
-			if (res.id === response.topic_response_id) {
-				return res;
-			}
+			return res.id === response.topic_response_id;
 		});
 
 		const findParsedReaction = parsedResponses.reactions.find(reaction => {
-			if (reaction.id === response.topic_reaction_id) {
-				return reaction;
-			}
+			return reaction.id === response.topic_reaction_id;
 		});
 
 		if (findParsedResponse === undefined) {
