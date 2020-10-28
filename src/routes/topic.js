@@ -1,10 +1,6 @@
 const router = require("express").Router();
 const { parseTopicResponses } = require("./helpers");
-const {
-	updateTopicCard,
-	updateTopicResponse,
-	updateTopicReaction
-} = require("../ws");
+const { newTopicCard, newTopicResponse, newTopicReaction } = require("../ws");
 
 module.exports = db => {
 	router.get("/card/:id", (req, res) => {
@@ -44,7 +40,6 @@ module.exports = db => {
 	});
 
 	router.post("/card", (req, res) => {
-		console.log(req.body);
 		db.query(
 			`
         INSERT INTO topic_cards (
@@ -55,7 +50,7 @@ module.exports = db => {
         )
 
         VALUES ($1::integer, $2::text, $3::text, $4::integer)
-        RETURNING topic_cards.id;
+        RETURNING *;
       `,
 			[
 				req.body.lecture_id,
@@ -65,6 +60,13 @@ module.exports = db => {
 			]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
+			newTopicCard(
+				card.id,
+				card.lecture_id,
+				card.title,
+				card.description,
+				card.position
+			);
 			res.json(card);
 		});
 	});
@@ -95,7 +97,7 @@ module.exports = db => {
 			]
 		).then(({ rows: responses }) => {
 			const [response] = responses;
-			updateTopicResponse(
+			newTopicResponse(
 				response.id,
 				response.topic_card_id,
 				response.student_id,
@@ -130,7 +132,7 @@ module.exports = db => {
 			]
 		).then(({ rows: reactions }) => {
 			const [reaction] = reactions;
-			updateTopicReaction(
+			newTopicReaction(
 				reaction.id,
 				reaction.topic_card_id,
 				reaction.student_id,
@@ -151,7 +153,7 @@ module.exports = db => {
 			[req.body.title, req.body.description, req.body.position, req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
-			updateTopicCard(card.id, card.title, card.description, card.position);
+			// editTopicCard(card.id, card.title, card.description, card.position);
 			res.status(204).json({});
 		});
 	});
@@ -166,7 +168,8 @@ module.exports = db => {
 			[req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
-			updateTopicCard(card.id, null, null, null);
+			// Might implement this later keep for stretch
+			// newTopicCard(card.id, null, null, null);
 			res.status(204).json({});
 		});
 	});

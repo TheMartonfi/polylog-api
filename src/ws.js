@@ -23,13 +23,20 @@ wss.on("connection", socket => {
 // wss.send.toAllClients((type, data));
 // With type of data being changed and the data
 
-const updateTopicCard = (topic_card_id, title, description, position) => {
+const newTopicCard = (
+	topic_card_id,
+	lecture_id,
+	title,
+	description,
+	position
+) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(
 				JSON.stringify({
-					type: "SET_TOPIC_CARD",
+					type: "NEW_TOPIC_CARD",
 					topic_card_id,
+					lecture_id,
 					title,
 					description,
 					position
@@ -39,7 +46,7 @@ const updateTopicCard = (topic_card_id, title, description, position) => {
 	});
 };
 
-const updateTopicResponse = (
+const newTopicResponse = (
 	topic_response_id,
 	topic_card_id,
 	student_id,
@@ -50,7 +57,7 @@ const updateTopicResponse = (
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(
 				JSON.stringify({
-					type: "SET_TOPIC_RESPONSE",
+					type: "NEW_TOPIC_RESPONSE",
 					topic_response_id,
 					topic_card_id,
 					student_id,
@@ -62,7 +69,7 @@ const updateTopicResponse = (
 	});
 };
 
-const updateTopicReaction = (
+const newTopicReaction = (
 	topic_reaction_id,
 	topic_card_id,
 	student_id,
@@ -72,7 +79,7 @@ const updateTopicReaction = (
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(
 				JSON.stringify({
-					type: "SET_TOPIC_REACTION",
+					type: "NEW_TOPIC_REACTION",
 					topic_reaction_id,
 					topic_card_id,
 					student_id,
@@ -153,11 +160,11 @@ const updateQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
 };
 
 module.exports = {
-	updateTopicCard,
+	newTopicCard,
 	updateQuizCard,
 	updateQuizQuestion,
 	updateQuizAnswer,
-	updateTopicResponse,
-	updateTopicReaction,
+	newTopicResponse,
+	newTopicReaction,
 	updateQuizResponse
 };
