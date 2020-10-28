@@ -39,10 +39,7 @@ module.exports = db => {
 		  AND topic_responses.session_id = $2::uuid
 		  AND topic_reactions.session_id = $2::uuid
 		`,
-			[
-				req.params.id,
-				req.query.session_uuid || "4a115ab1-c845-412a-b868-531cf505bf45"
-			]
+			[req.params.id, req.query.session_uuid]
 		).then(({ rows: responses }) => res.json(parseTopicResponses(responses)));
 	});
 
