@@ -22,7 +22,7 @@ module.exports = db => {
 		).then(({ rows: cards }) => res.json(cards));
 	});
 
-	router.get("/responses/:uuid", (req, res) => {
+	router.get("/responses/:id", (req, res) => {
 		db.query(
 			`
 		  SELECT
@@ -33,12 +33,16 @@ module.exports = db => {
 		    topic_reactions.id AS topic_reaction_id,
 		    topic_reactions.reaction
 		  FROM topic_responses
-		  JOIN topic_reactions ON $1 = topic_reactions.topic_card_id
+			JOIN topic_reactions ON
+				topic_reactions.topic_card_id = topic_responses.topic_card_id
 		  WHERE topic_responses.topic_card_id = $1::integer
 		  AND topic_responses.session_id = $2::uuid
 		  AND topic_reactions.session_id = $2::uuid
 		`,
-			[req.query.id, req.params.uuid]
+			[
+				req.params.id,
+				req.query.session_uuid || "4a115ab1-c845-412a-b868-531cf505bf45"
+			]
 		).then(({ rows: responses }) => res.json(parseTopicResponses(responses)));
 	});
 

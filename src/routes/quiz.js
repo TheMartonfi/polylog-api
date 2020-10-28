@@ -29,7 +29,7 @@ module.exports = db => {
 		).then(({ rows: cards }) => res.json(parseQuizCards(cards)));
 	});
 
-	router.get("/responses/:uuid", (req, res) => {
+	router.get("/responses/:id", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -44,7 +44,7 @@ module.exports = db => {
       AND quiz_responses.session_id = $2::uuid
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[req.query.id, "4a115ab1-c845-412a-b868-531cf505bf45"]
+			[req.params.id, req.query.uuid || "4a115ab1-c845-412a-b868-531cf505bf45"]
 		).then(({ rows: responses }) => res.json(responses));
 	});
 
