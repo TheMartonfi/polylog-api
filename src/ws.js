@@ -1,3 +1,5 @@
+// const app = require("../server");
+// const server = require("http").Server(app);
 const WebSocket = require("ws");
 const wss = new WebSocket.Server({ port: 3002 });
 
