@@ -91,6 +91,8 @@ module.exports = db => {
 				VALUES ($1::integer, $2::uuid, $3::integer, $4::text, $5::text)
 				RETURNING
 					topic_responses.id,
+					topic_responses.topic_card_id,
+					topic_responses.student_id,
 					topic_responses.type,
 					topic_responses.response;
       `,

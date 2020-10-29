@@ -79,7 +79,7 @@ const newTopicResponse = (
 	topic_response_id,
 	topic_card_id,
 	student_id,
-	type,
+	responseType,
 	response
 ) => {
 	wss.clients.forEach(function eachClient(client) {
@@ -90,7 +90,7 @@ const newTopicResponse = (
 					topic_response_id,
 					topic_card_id,
 					student_id,
-					type,
+					responseType,
 					response
 				})
 			);
