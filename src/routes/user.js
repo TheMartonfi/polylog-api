@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 module.exports = db => {
-	router.get("/", (req, res) => {
+	router.get("/:id", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -12,8 +12,7 @@ module.exports = db => {
       FROM users
       WHERE users.id = $1::integer
     `,
-			// When the front end makes a request make it send a response that gives me the conditions
-			[1]
+			[req.params.id]
 		).then(({ rows: users }) => {
 			const [user] = users;
 			res.json(user);
@@ -33,9 +32,16 @@ module.exports = db => {
 		  VALUES ($1::text, $2::text, $3::text, $4::text)
 		  RETURNING *;
 		`,
-			// When the front end makes a request make it send a response that gives me the conditions
-			[]
-		).then(({ rows: user }) => res.json(user));
+			[
+				req.body.first_name,
+				req.body.last_name,
+				req.body.email,
+				req.body.password
+			]
+		).then(({ rows: users }) => {
+			const [user] = users;
+			res.json(user);
+		});
 	});
 
 	return router;
