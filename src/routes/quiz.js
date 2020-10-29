@@ -79,7 +79,10 @@ module.exports = db => {
       )
       
       VALUES ($1::integer, $2::text)
-      RETURNING quiz_questions.id;
+			RETURNING
+				quiz_questions.quiz_card_id,
+				quiz_questions.id,
+				quiz_questions.question;
     `,
 			[req.body.quiz_card_id, req.body.question]
 		).then(({ rows: questions }) => {
