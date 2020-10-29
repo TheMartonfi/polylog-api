@@ -1,4 +1,5 @@
 // This is disgusting refactor this!!!!
+// Might also be a bug where a quiz question without answer won't show up
 const parseQuizCards = cards => {
 	const parsedCards = [];
 

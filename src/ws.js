@@ -119,13 +119,14 @@ const newTopicReaction = (
 	});
 };
 
-const updateQuizCard = (quiz_card_id, title, position) => {
+const newQuizCard = (quiz_card_id, lecture_id, title, position) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(
 				JSON.stringify({
-					type: "SET_QUIZ_CARD",
+					type: "NEW_QUIZ_CARD",
 					quiz_card_id,
+					lecture_id,
 					title,
 					position
 				})
@@ -134,12 +135,12 @@ const updateQuizCard = (quiz_card_id, title, position) => {
 	});
 };
 
-const updateQuizQuestion = (quiz_card_id, quiz_question_id, question) => {
+const newQuizQuestion = (quiz_card_id, quiz_question_id, question) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(
 				JSON.stringify({
-					type: "SET_QUIZ_QUESTION",
+					type: "NEW_QUIZ_QUESTION",
 					quiz_card_id,
 					quiz_question_id,
 					question
@@ -149,7 +150,7 @@ const updateQuizQuestion = (quiz_card_id, quiz_question_id, question) => {
 	});
 };
 
-const updateQuizAnswer = (
+const newQuizAnswer = (
 	quiz_card_id,
 	quiz_question_id,
 	quiz_answer_id,
@@ -160,7 +161,7 @@ const updateQuizAnswer = (
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(
 				JSON.stringify({
-					type: "SET_QUIZ_ANSWER",
+					type: "NEW_QUIZ_ANSWER",
 					quiz_card_id,
 					quiz_question_id,
 					quiz_answer_id,
@@ -173,12 +174,12 @@ const updateQuizAnswer = (
 };
 
 // include quiz_response_id
-const updateQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
+const newQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(
 				JSON.stringify({
-					type: "SET_QUIZ_RESPONSE",
+					type: "NEW_QUIZ_RESPONSE",
 					quiz_card_id,
 					student_id,
 					quiz_answer_id
@@ -197,8 +198,8 @@ module.exports = {
 	newTopicReaction,
 	editTopicCard,
 	deleteTopicCard,
-	updateQuizCard,
-	updateQuizQuestion,
-	updateQuizAnswer,
-	updateQuizResponse
+	newQuizCard,
+	newQuizQuestion,
+	newQuizAnswer,
+	newQuizResponse
 };

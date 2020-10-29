@@ -1,10 +1,10 @@
 const router = require("express").Router();
 const { parseQuizCards } = require("./helpers");
 const {
-	updateQuizCard,
-	updateQuizQuestion,
-	updateQuizAnswer,
-	updateQuizResponse
+	newQuizCard,
+	newQuizQuestion,
+	newQuizAnswer,
+	newQuizResponse
 } = require("../ws");
 
 module.exports = db => {
@@ -56,11 +56,16 @@ module.exports = db => {
       )
       
       VALUES ($1::integer, $2::text, $3::integer)
-      RETURNING quiz_cards.id;
+			RETURNING
+				quiz_cards.id,
+				quiz_cards.lecture_id,
+				quiz_cards.title,
+				quiz_cards.position;
     `,
 			[req.body.lecture_id, req.body.title, req.body.position]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
+			newQuizCard(card.id, card.lecture_id, card.title, card.position);
 			res.json(card);
 		});
 	});
@@ -79,6 +84,7 @@ module.exports = db => {
 			[req.body.quiz_card_id, req.body.question]
 		).then(({ rows: questions }) => {
 			const [question] = questions;
+			newQuizQuestion(question.quiz_card_id, question.id, question.question);
 			res.json(question);
 		});
 	});
@@ -107,6 +113,13 @@ module.exports = db => {
 			[req.body.quiz_question_id, req.body.answer, req.body.correct]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
+			newQuizAnswer(
+				answer.quiz_card_id,
+				answer.quiz_question_id,
+				answer.id,
+				answer.answer,
+				answer.correct
+			);
 			res.json(answer);
 		});
 	});
@@ -135,7 +148,7 @@ module.exports = db => {
 			]
 		).then(({ rows: responses }) => {
 			const [response] = responses;
-			updateQuizResponse(
+			newQuizResponse(
 				response.quiz_card_id,
 				response.student_id,
 				response.quiz_answer_id
@@ -158,7 +171,7 @@ module.exports = db => {
 			[req.body.title, req.body.position, req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
-			updateQuizCard(card.id, card.title, card.position);
+			// newQuizCard(card.id, card.title, card.position);
 			res.status(204).json({});
 		});
 	});
@@ -177,7 +190,7 @@ module.exports = db => {
 			[req.body.question, req.params.id]
 		).then(({ rows: questions }) => {
 			const [question] = questions;
-			updateQuizQuestion(question.quiz_card_id, question.id, question.question);
+			// newQuizQuestion(question.quiz_card_id, question.id, question.question);
 			res.json(question);
 		});
 	});
@@ -207,13 +220,13 @@ module.exports = db => {
 			[req.body.answer, req.body.correct, req.params.id]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
-			updateQuizAnswer(
-				answer.quiz_card_id,
-				answer.quiz_question_id,
-				answer.id,
-				answer.answer,
-				answer.correct
-			);
+			// newQuizAnswer(
+			// 	answer.quiz_card_id,
+			// 	answer.quiz_question_id,
+			// 	answer.id,
+			// 	answer.answer,
+			// 	answer.correct
+			// );
 			res.json(answer);
 		});
 	});
@@ -228,7 +241,7 @@ module.exports = db => {
 			[req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
-			updateQuizCard(card.id, null, null);
+			// deleteQuizCard(card.id);
 			res.status(204).json({});
 		});
 	});
@@ -243,7 +256,7 @@ module.exports = db => {
 			[req.params.id]
 		).then(({ rows: questions }) => {
 			const [question] = questions;
-			updateQuizQuestion(question.quiz_card_id, question.id, null);
+			// deleteQuizQuestion(question.quiz_card_id, question.id);
 			res.json(question);
 		});
 	});
@@ -268,13 +281,11 @@ module.exports = db => {
 			[req.params.id]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
-			updateQuizAnswer(
-				answer.quiz_card_id,
-				answer.quiz_question_id,
-				answer.id,
-				null,
-				null
-			);
+			// deleteQuizAnswer(
+			// 	answer.quiz_card_id,
+			// 	answer.quiz_question_id,
+			// 	answer.id,
+			// );
 			res.json(answer);
 		});
 	});
