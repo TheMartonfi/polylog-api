@@ -103,12 +103,19 @@ module.exports = db => {
 					)
 					
 				VALUES ($1::integer, $2::text, $3::boolean)
-				RETURNING quiz_answers.id, quiz_answers.quiz_question_id
+				RETURNING
+					quiz_answers.id,
+					quiz_answers.quiz_question_id,
+					quiz_answers.answer,
+					quiz_answers.correct
 			)
 			
 			SELECT
 				quiz_questions.quiz_card_id,
-				inserted.id
+				inserted.quiz_question_id,
+				inserted.id,
+				inserted.answer,
+				inserted.correct
 			FROM inserted
 			JOIN quiz_questions ON quiz_questions.id = inserted.quiz_question_id
 			LIMIT 1;
