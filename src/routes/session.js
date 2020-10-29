@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 module.exports = db => {
-	router.get("/", (req, res) => {
+	router.get("/:uuid", (req, res) => {
 		db.query(
 			`
       SELECT
@@ -12,7 +12,7 @@ module.exports = db => {
       WHERE sessions.id = $1::uuid
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			["4a115ab1-c845-412a-b868-531cf505bf45"]
+			[req.params.uuid]
 		).then(({ rows: session }) => res.json(session));
 	});
 
@@ -29,11 +29,11 @@ module.exports = db => {
       RETURNING *;
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[1]
+			[req.body.lecture_id]
 		).then(({ rows: session }) => res.json(session));
 	});
 
-	router.put("/", (req, res) => {
+	router.put("/:uuid", (req, res) => {
 		db.query(
 			`
       UPDATE sessions
@@ -41,7 +41,7 @@ module.exports = db => {
       WHERE sessions.id = $1::uuid
     `,
 			// When the front end makes a request make it send a response that gives me the conditions
-			[]
+			[req.params.uuid]
 		).then(({ rows: session }) => res.json(session));
 	});
 
