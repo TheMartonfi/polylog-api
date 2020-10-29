@@ -7,7 +7,10 @@ const {
 	newQuizResponse,
 	editQuizCard,
 	editQuizQuestion,
-	editQuizAnswer
+	editQuizAnswer,
+	deleteQuizCard,
+	deleteQuizQuestion,
+	deleteQuizAnswer
 } = require("../ws");
 
 module.exports = db => {
@@ -260,7 +263,7 @@ module.exports = db => {
 			[req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
-			// deleteQuizCard(card.id);
+			deleteQuizCard(card.id);
 			res.status(204).json({});
 		});
 	});
@@ -270,12 +273,12 @@ module.exports = db => {
 			`
       DELETE FROM quiz_questions
       WHERE quiz_questions.id = $1::integer
-      RETURNING *;
+      RETURNING quiz_questions.quiz_card_id, quiz_questions.id;
     `,
 			[req.params.id]
 		).then(({ rows: questions }) => {
 			const [question] = questions;
-			// deleteQuizQuestion(question.quiz_card_id, question.id);
+			deleteQuizQuestion(question.quiz_card_id, question.id);
 			res.json(question);
 		});
 	});
@@ -300,11 +303,7 @@ module.exports = db => {
 			[req.params.id]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
-			// deleteQuizAnswer(
-			// 	answer.quiz_card_id,
-			// 	answer.quiz_question_id,
-			// 	answer.id,
-			// );
+			deleteQuizAnswer(answer.quiz_card_id, answer.quiz_question_id, answer.id);
 			res.json(answer);
 		});
 	});

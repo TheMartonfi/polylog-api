@@ -249,6 +249,48 @@ const editQuizAnswer = (
 	});
 };
 
+const deleteQuizCard = quiz_card_id => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "DELETE_QUIZ_CARD",
+					quiz_card_id
+				})
+			);
+		}
+	});
+};
+
+const deleteQuizQuestion = (quiz_card_id, quiz_question_id) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "DELETE_QUIZ_QUESTION",
+					quiz_card_id,
+					quiz_question_id
+				})
+			);
+		}
+	});
+};
+
+const deleteQuizAnswer = (quiz_card_id, quiz_question_id, quiz_answer_id) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "DELETE_QUIZ_ANSWER",
+					quiz_card_id,
+					quiz_question_id,
+					quiz_answer_id
+				})
+			);
+		}
+	});
+};
+
 // Export a function that sets up the websocket and returns wss
 // So you can move all these functions into different files
 
@@ -264,5 +306,8 @@ module.exports = {
 	newQuizResponse,
 	editQuizCard,
 	editQuizQuestion,
-	editQuizAnswer
+	editQuizAnswer,
+	deleteQuizCard,
+	deleteQuizQuestion,
+	deleteQuizAnswer
 };
