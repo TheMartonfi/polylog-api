@@ -42,7 +42,7 @@ module.exports = db => {
       WHERE quiz_responses.quiz_card_id = $1::integer
       AND quiz_responses.session_id = $2::uuid
     `,
-			[req.params.id, req.query.session_uuid]
+			[req.params.id, req.query.session_id]
 		).then(({ rows: responses }) => res.json(responses));
 	});
 

@@ -188,6 +188,9 @@ const updateQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
 	});
 };
 
+// Export a function that sets up the websocket and returns wss
+// So you can move all these functions into different files
+
 module.exports = {
 	newTopicCard,
 	newTopicResponse,

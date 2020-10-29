@@ -41,7 +41,7 @@ module.exports = db => {
 		  AND topic_responses.session_id = $2::uuid
 		  AND topic_reactions.session_id = $2::uuid
 		`,
-			[req.params.id, req.query.session_uuid]
+			[req.params.id, req.query.session_id]
 		).then(({ rows: responses }) => res.json(parseTopicResponses(responses)));
 	});
 
@@ -129,6 +129,7 @@ module.exports = db => {
         VALUES ($1::integer, $2::uuid, $3::integer, $4::boolean)
 				RETURNING
 					topic_reactions.id,
+					topic_reactions.topic_card_id,
 					topic_reactions.student_id,
 					topic_reactions.reaction;
       `,
