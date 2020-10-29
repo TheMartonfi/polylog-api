@@ -226,6 +226,29 @@ const editQuizQuestion = (quiz_card_id, quiz_question_id, question) => {
 	});
 };
 
+const editQuizAnswer = (
+	quiz_card_id,
+	quiz_question_id,
+	quiz_answer_id,
+	answer,
+	correct
+) => {
+	wss.clients.forEach(function eachClient(client) {
+		if (client.readyState === WebSocket.OPEN) {
+			client.send(
+				JSON.stringify({
+					type: "EDIT_QUIZ_ANSWER",
+					quiz_card_id,
+					quiz_question_id,
+					quiz_answer_id,
+					answer,
+					correct
+				})
+			);
+		}
+	});
+};
+
 // Export a function that sets up the websocket and returns wss
 // So you can move all these functions into different files
 
@@ -240,5 +263,6 @@ module.exports = {
 	newQuizAnswer,
 	newQuizResponse,
 	editQuizCard,
-	editQuizQuestion
+	editQuizQuestion,
+	editQuizAnswer
 };

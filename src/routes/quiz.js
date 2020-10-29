@@ -6,7 +6,8 @@ const {
 	newQuizAnswer,
 	newQuizResponse,
 	editQuizCard,
-	editQuizQuestion
+	editQuizQuestion,
+	editQuizAnswer
 } = require("../ws");
 
 module.exports = db => {
@@ -228,6 +229,7 @@ module.exports = db => {
 				RETURNING
 					quiz_questions.quiz_card_id,
 					quiz_answers.quiz_question_id,
+					quiz_answers.id,
 					quiz_answers.answer,
 					quiz_answers.correct
 			)
@@ -237,13 +239,13 @@ module.exports = db => {
 			[req.body.answer, req.body.correct, req.params.id]
 		).then(({ rows: answers }) => {
 			const [answer] = answers;
-			// newQuizAnswer(
-			// 	answer.quiz_card_id,
-			// 	answer.quiz_question_id,
-			// 	answer.id,
-			// 	answer.answer,
-			// 	answer.correct
-			// );
+			editQuizAnswer(
+				answer.quiz_card_id,
+				answer.quiz_question_id,
+				answer.id,
+				answer.answer,
+				answer.correct
+			);
 			res.json(answer);
 		});
 	});
