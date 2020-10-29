@@ -4,7 +4,8 @@ const {
 	newQuizCard,
 	newQuizQuestion,
 	newQuizAnswer,
-	newQuizResponse
+	newQuizResponse,
+	editQuizCard
 } = require("../ws");
 
 module.exports = db => {
@@ -186,7 +187,7 @@ module.exports = db => {
 			[req.body.title, req.body.position, req.params.id]
 		).then(({ rows: cards }) => {
 			const [card] = cards;
-			// newQuizCard(card.id, card.title, card.position);
+			editQuizCard(card.id, card.title, card.position);
 			res.status(204).json({});
 		});
 	});
