@@ -1,5 +1,3 @@
-// const app = require("../server");
-// const server = require("http").Server(app);
 const WebSocket = require("ws");
 const wss = new WebSocket.Server({ port: 3002 });
 
@@ -292,9 +290,6 @@ const deleteQuizAnswer = (quiz_card_id, quiz_question_id, quiz_answer_id) => {
 		}
 	});
 };
-
-// Export a function that sets up the websocket and returns wss
-// So you can move all these functions into different files
 
 module.exports = {
 	newTopicCard,
