@@ -174,15 +174,23 @@ const newQuizAnswer = (
 };
 
 // include quiz_response_id
-const newQuizResponse = (quiz_card_id, student_id, quiz_answer_id) => {
+const newQuizResponse = (
+	quiz_response_id,
+	quiz_card_id,
+	quiz_question_id,
+	student_id,
+	quiz_answer_id
+) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(
 				JSON.stringify({
 					type: "NEW_QUIZ_RESPONSE",
+					quiz_response_id,
 					quiz_card_id,
-					student_id,
-					quiz_answer_id
+					quiz_question_id,
+					quiz_answer_id,
+					student_id
 				})
 			);
 		}

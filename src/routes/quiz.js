@@ -34,7 +34,8 @@ module.exports = db => {
 			`
 			SELECT
 				quiz_responses.id,
-        quiz_responses.student_id,
+				quiz_responses.student_id,
+				quiz_questions.id AS quiz_question_id,
         quiz_answers.id AS quiz_answer_id
       FROM quiz_responses
       JOIN quiz_answers ON quiz_answers.id = quiz_responses.quiz_answer_id
@@ -134,6 +135,7 @@ module.exports = db => {
 		});
 	});
 
+	// I am not returning the quiz_question_id yet not sure if necessary
 	router.post("/response", (req, res) => {
 		db.query(
 			`
@@ -147,6 +149,7 @@ module.exports = db => {
       VALUES ($1::integer, $2::integer, $3::uuid, $4::integer)
 			RETURNING
 				quiz_responses.id,
+				quiz_responses.quiz_card_id,
 				quiz_responses.quiz_answer_id,
 				quiz_responses.student_id
     `,
@@ -159,9 +162,11 @@ module.exports = db => {
 		).then(({ rows: responses }) => {
 			const [response] = responses;
 			newQuizResponse(
+				response.id,
 				response.quiz_card_id,
-				response.student_id,
-				response.quiz_answer_id
+				response.quiz_question_id,
+				response.quiz_answer_id,
+				response.student_id
 			);
 			res.json(response);
 		});
