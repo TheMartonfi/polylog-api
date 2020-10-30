@@ -20,10 +20,10 @@ module.exports = db => {
 	// WHERE sessions.lecture_id = 1
 	// ORDER BY sessions.created_at;
 
-	// SELECT COUNT(*) FROM sessions
+	// SELECT COUNT(*) FROM sessions AS sessions_count
 	// WHERE sessions.lecture_id = 1;
 
-	// SELECT COUNT(*) FROM attendees
+	// SELECT COUNT(*) FROM attendees AS attendees_count
 	// JOIN sessions ON sessions.id = attendees.session_id
 	// JOIN lectures ON lectures.id = sessions.lecture_id;
 
@@ -37,52 +37,62 @@ module.exports = db => {
 	// GROUP BY attendees.session_id
 	// 	) AS attendees;
 
-	// SELECT COUNT(*) FROM topic_reactions
+	// SELECT COUNT(*) AS positive_reactions_count
+	// FROM topic_reactions
 	// JOIN topic_cards
 	// ON topic_cards.id = topic_reactions.topic_card_id
 	// WHERE topic_reactions.reaction = true
 	// AND topic_cards.lecture_id = 1;
 
-	// SELECT COUNT(*) FROM topic_reactions
+	// SELECT COUNT(*) negative_reactions_count
+	// FROM topic_reactions
 	// JOIN topic_cards
 	// ON topic_cards.id = topic_reactions.topic_card_id
 	// WHERE topic_reactions.reaction = false
 	// AND topic_cards.lecture_id = 1;
 
-	// SELECT COUNT(*) FROM topic_responses
+	// SELECT COUNT(*) AS questions_count
+	// FROM topic_responses
 	// JOIN topic_cards
 	// ON topic_cards.id = topic_responses.topic_card_id
 	// WHERE topic_responses.type = 'question'
 	// AND topic_cards.lecture_id = 1;
 
-	// SELECT COUNT(*) FROM topic_responses
+	// SELECT COUNT(*) AS answers_count
+	// FROM topic_responses
 	// JOIN topic_cards
 	// ON topic_cards.id = topic_responses.topic_card_id
 	// WHERE topic_responses.type = 'answer'
 	// AND topic_cards.lecture_id = 2;
 
-	// SELECT COUNT(*) FROM topic_responses
+	// SELECT COUNT(*) AS comments_count
+	// FROM topic_responses
 	// JOIN topic_cards
 	// ON topic_cards.id = topic_responses.topic_card_id
 	// WHERE topic_responses.type = 'comment'
-	// AND topic_cards.lecture_id = 2;
+	// AND topic_cards.lecture_id = 1;
 
-	// 	SELECT COUNT(*) FROM quiz_cards
+	// 	SELECT COUNT(*) AS quiz_cards_count
+	// FROM quiz_cards
 	// WHERE quiz_cards.lecture_id = 1;
 
-	// SELECT DISTINCT quiz_responses.id, quiz_answers.correct FROM quiz_responses
+	// SELECT DISTINCT COUNT(quiz_responses.id) AS quiz_correct_count, quiz_answers.correct
+	// FROM quiz_responses
 	// JOIN quiz_answers
 	// ON quiz_answers.id = quiz_responses.quiz_answer_id
 	// JOIN quiz_cards ON quiz_cards.id = quiz_responses.quiz_card_id
 	// WHERE quiz_cards.lecture_id = 1
-	// AND quiz_answers.correct = true;
+	// AND quiz_answers.correct = true
+	// GROUP BY quiz_answers.correct;
 
-	// SELECT DISTINCT quiz_responses.id, quiz_answers.correct FROM quiz_responses
+	// SELECT DISTINCT COUNT(quiz_responses.id) AS quiz_incorrect_count, quiz_answers.correct
+	// FROM quiz_responses
 	// JOIN quiz_answers
 	// ON quiz_answers.id = quiz_responses.quiz_answer_id
 	// JOIN quiz_cards ON quiz_cards.id = quiz_responses.quiz_card_id
 	// WHERE quiz_cards.lecture_id = 1
-	// AND quiz_answers.correct = false;
+	// AND quiz_answers.correct = true
+	// GROUP BY quiz_answers.correct;
 
 	router.post("/", (req, res) => {
 		db.query(
