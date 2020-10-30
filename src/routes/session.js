@@ -2,97 +2,178 @@ const router = require("express").Router();
 
 module.exports = db => {
 	router.get("/:id", (req, res) => {
+		// Refactor this to Promise.all
+		// ElephantSQL which hosts our databse doesn't allow for more than 5 connections
 		db.query(
 			`
-			SELECT
-				sessions.id,
-        sessions.created_at,
-        sessions.start_time,
-        sessions.end_time
-      FROM sessions
-      WHERE sessions.lecture_id = $1::integer
+			SELECT sessions.created_at FROM sessions
+			WHERE sessions.lecture_id = $1::integer
+			ORDER BY sessions.created_at;
     `,
 			[req.params.id]
-		).then(({ rows: sessions }) => res.json(sessions));
+		).then(({ rows: startDates }) => {
+			const [created_at] = startDates;
+			db.query(
+				`
+				SELECT COUNT(*) AS sessions_count FROM sessions
+				WHERE sessions.lecture_id = $1::integer;
+			`,
+				[req.params.id]
+			).then(({ rows: sessions_count }) => {
+				const [session_count] = sessions_count;
+				db.query(
+					`
+					SELECT COUNT(*) AS attendees_count FROM attendees
+					JOIN sessions ON sessions.id = attendees.session_id
+					JOIN lectures ON lectures.id = sessions.lecture_id
+					WHERE lectures.id = $1::integer
+				`,
+					[req.params.id]
+				).then(({ rows: attendees_count }) => {
+					const [attendee_count] = attendees_count;
+					db.query(
+						`
+						SELECT AVG(attendees.count) AS attendees_avg
+						FROM (
+						SELECT COUNT(*)
+						FROM attendees
+						JOIN sessions ON sessions.id = attendees.session_id
+						JOIN lectures ON lectures.id = sessions.lecture_id
+						WHERE lectures.id = $1::integer
+						GROUP BY attendees.session_id
+							) AS attendees;
+					`,
+						[req.params.id]
+					).then(({ rows: attendees_avg }) => {
+						const [attendee_avg] = attendees_avg;
+						db.query(
+							`
+							SELECT COUNT(*) AS positive_reactions_count
+							FROM topic_reactions
+							JOIN topic_cards
+							ON topic_cards.id = topic_reactions.topic_card_id
+							WHERE topic_reactions.reaction = true
+							AND topic_cards.lecture_id = $1::integer;
+						`,
+							[req.params.id]
+						).then(({ rows: positive_reactions_count }) => {
+							const [positive_reaction_count] = positive_reactions_count;
+
+							db.query(
+								`
+								SELECT COUNT(*) negative_reactions_count
+								FROM topic_reactions
+								JOIN topic_cards
+								ON topic_cards.id = topic_reactions.topic_card_id
+								WHERE topic_reactions.reaction = false
+								AND topic_cards.lecture_id = $1::integer;
+							`,
+								[req.params.id]
+							).then(({ rows: negative_reactions_count }) => {
+								const [negative_reaction_count] = negative_reactions_count;
+								db.query(
+									// This returns 0 questions?
+									`
+									SELECT COUNT(*) AS questions_count
+									FROM topic_responses
+									JOIN topic_cards
+									ON topic_cards.id = topic_responses.topic_card_id
+									WHERE topic_responses.type = 'question'
+									AND topic_cards.lecture_id = $1::integer;
+								`,
+									[req.query.params]
+								).then(({ rows: questions_count }) => {
+									const [question_count] = questions_count;
+									db.query(
+										`
+										SELECT COUNT(*) AS answers_count
+										FROM topic_responses
+										JOIN topic_cards
+										ON topic_cards.id = topic_responses.topic_card_id
+										WHERE topic_responses.type = 'answer'
+										AND topic_cards.lecture_id = $1::integer;
+									`,
+										[req.params.id]
+									).then(({ rows: answers_count }) => {
+										const [answer_count] = answers_count;
+										db.query(
+											`
+											SELECT COUNT(*) AS comments_count
+											FROM topic_responses
+											JOIN topic_cards
+											ON topic_cards.id = topic_responses.topic_card_id
+											WHERE topic_responses.type = 'comment'
+											AND topic_cards.lecture_id = $1::integer;
+										`,
+											[req.params.id]
+										).then(({ rows: comments_count }) => {
+											const [comment_count] = comments_count;
+											db.query(
+												`
+												SELECT COUNT(*) AS quiz_cards_count
+												FROM quiz_cards
+												WHERE quiz_cards.lecture_id = $1::integer;
+											`,
+												[req.params.id]
+											).then(({ rows: quiz_cards_count }) => {
+												const [quiz_card_count] = quiz_cards_count;
+												db.query(
+													`
+													SELECT DISTINCT COUNT(quiz_responses.id) AS quiz_correct_count, quiz_answers.correct
+													FROM quiz_responses
+													JOIN quiz_answers
+													ON quiz_answers.id = quiz_responses.quiz_answer_id
+													JOIN quiz_cards ON quiz_cards.id = quiz_responses.quiz_card_id
+													WHERE quiz_cards.lecture_id = $1::integer
+													AND quiz_answers.correct = true
+													GROUP BY quiz_answers.correct;
+												`,
+													[req.params.id]
+												).then(({ rows: quiz_corrects_count }) => {
+													const [quiz_correct_count] = quiz_corrects_count;
+													db.query(
+														`
+														SELECT DISTINCT COUNT(quiz_responses.id) AS quiz_incorrect_count, quiz_answers.correct
+														FROM quiz_responses
+														JOIN quiz_answers
+														ON quiz_answers.id = quiz_responses.quiz_answer_id
+														JOIN quiz_cards ON quiz_cards.id = quiz_responses.quiz_card_id
+														WHERE quiz_cards.lecture_id = $1::integer
+														AND quiz_answers.correct = true
+														GROUP BY quiz_answers.correct;
+													`,
+														[req.params.id]
+													).then(({ rows: quiz_incorrects_count }) => {
+														const [
+															quiz_incorrect_count
+														] = quiz_incorrects_count;
+														res.json({
+															...created_at,
+															...session_count,
+															...attendee_count,
+															...attendee_avg,
+															...positive_reaction_count,
+															...negative_reaction_count,
+															...question_count,
+															...answer_count,
+															...comment_count,
+															...quiz_card_count,
+															...quiz_correct_count,
+															...quiz_incorrect_count
+														});
+													});
+												});
+											});
+										});
+									});
+								});
+							});
+						});
+					});
+				});
+			});
+		});
 	});
-
-	// SELECT sessions.created_at FROM sessions
-	// WHERE sessions.lecture_id = 1
-	// ORDER BY sessions.created_at;
-
-	// SELECT COUNT(*) FROM sessions AS sessions_count
-	// WHERE sessions.lecture_id = 1;
-
-	// SELECT COUNT(*) FROM attendees AS attendees_count
-	// JOIN sessions ON sessions.id = attendees.session_id
-	// JOIN lectures ON lectures.id = sessions.lecture_id;
-
-	// SELECT AVG(attendees.count) AS attendees_avg
-	// FROM (
-	// SELECT COUNT(*)
-	// FROM attendees
-	// JOIN sessions ON sessions.id = attendees.session_id
-	// JOIN lectures ON lectures.id = sessions.lecture_id
-	// WHERE lectures.id = 1
-	// GROUP BY attendees.session_id
-	// 	) AS attendees;
-
-	// SELECT COUNT(*) AS positive_reactions_count
-	// FROM topic_reactions
-	// JOIN topic_cards
-	// ON topic_cards.id = topic_reactions.topic_card_id
-	// WHERE topic_reactions.reaction = true
-	// AND topic_cards.lecture_id = 1;
-
-	// SELECT COUNT(*) negative_reactions_count
-	// FROM topic_reactions
-	// JOIN topic_cards
-	// ON topic_cards.id = topic_reactions.topic_card_id
-	// WHERE topic_reactions.reaction = false
-	// AND topic_cards.lecture_id = 1;
-
-	// SELECT COUNT(*) AS questions_count
-	// FROM topic_responses
-	// JOIN topic_cards
-	// ON topic_cards.id = topic_responses.topic_card_id
-	// WHERE topic_responses.type = 'question'
-	// AND topic_cards.lecture_id = 1;
-
-	// SELECT COUNT(*) AS answers_count
-	// FROM topic_responses
-	// JOIN topic_cards
-	// ON topic_cards.id = topic_responses.topic_card_id
-	// WHERE topic_responses.type = 'answer'
-	// AND topic_cards.lecture_id = 2;
-
-	// SELECT COUNT(*) AS comments_count
-	// FROM topic_responses
-	// JOIN topic_cards
-	// ON topic_cards.id = topic_responses.topic_card_id
-	// WHERE topic_responses.type = 'comment'
-	// AND topic_cards.lecture_id = 1;
-
-	// 	SELECT COUNT(*) AS quiz_cards_count
-	// FROM quiz_cards
-	// WHERE quiz_cards.lecture_id = 1;
-
-	// SELECT DISTINCT COUNT(quiz_responses.id) AS quiz_correct_count, quiz_answers.correct
-	// FROM quiz_responses
-	// JOIN quiz_answers
-	// ON quiz_answers.id = quiz_responses.quiz_answer_id
-	// JOIN quiz_cards ON quiz_cards.id = quiz_responses.quiz_card_id
-	// WHERE quiz_cards.lecture_id = 1
-	// AND quiz_answers.correct = true
-	// GROUP BY quiz_answers.correct;
-
-	// SELECT DISTINCT COUNT(quiz_responses.id) AS quiz_incorrect_count, quiz_answers.correct
-	// FROM quiz_responses
-	// JOIN quiz_answers
-	// ON quiz_answers.id = quiz_responses.quiz_answer_id
-	// JOIN quiz_cards ON quiz_cards.id = quiz_responses.quiz_card_id
-	// WHERE quiz_cards.lecture_id = 1
-	// AND quiz_answers.correct = true
-	// GROUP BY quiz_answers.correct;
 
 	router.post("/", (req, res) => {
 		db.query(
