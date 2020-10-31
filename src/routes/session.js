@@ -72,7 +72,6 @@ module.exports = db => {
 							).then(({ rows: negative_reactions_count }) => {
 								const [negative_reaction_count] = negative_reactions_count;
 								db.query(
-									// This returns 0 questions?
 									`
 									SELECT COUNT(*) AS questions_count
 									FROM topic_responses
@@ -81,7 +80,7 @@ module.exports = db => {
 									WHERE topic_responses.type = 'question'
 									AND topic_cards.lecture_id = $1::integer;
 								`,
-									[req.query.params]
+									[req.params.id]
 								).then(({ rows: questions_count }) => {
 									const [question_count] = questions_count;
 									db.query(
