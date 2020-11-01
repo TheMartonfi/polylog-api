@@ -26,7 +26,7 @@ module.exports = db => {
 			)
 
 		  VALUES ($1::integer, $2::text, $3::text)
-		  RETURNING lectures.id;
+		  RETURNING lectures.id, lectures.lecturer_id;
 		`,
 			[req.body.lecturer_id, req.body.title, req.body.description]
 		).then(({ rows: lectures }) => {
