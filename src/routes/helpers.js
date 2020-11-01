@@ -81,6 +81,7 @@ const parseTopicResponses = responses => {
 		if (findParsedResponse === undefined) {
 			parsedResponses.responses.push({
 				id: response.topic_response_id,
+				student_id: response.student_id,
 				type: response.type,
 				response: response.response
 			});
