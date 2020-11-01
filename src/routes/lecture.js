@@ -5,7 +5,8 @@ module.exports = db => {
 		db.query(
 			`
       SELECT
-        lectures.id,
+				lectures.id,
+				lectures.lecturer_id,
         lectures.title,
         lectures.description
       FROM lectures
