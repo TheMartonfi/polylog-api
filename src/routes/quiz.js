@@ -167,7 +167,8 @@ module.exports = db => {
 				inserted.quiz_card_id,
 				quiz_answers.quiz_question_id,
 				inserted.quiz_answer_id,
-				inserted.student_id
+				inserted.student_id,
+				quiz_answers.correct
 			FROM inserted
 			JOIN quiz_answers ON quiz_answers.id = inserted.quiz_answer_id
 			LIMIT 1;
@@ -185,7 +186,8 @@ module.exports = db => {
 				response.quiz_card_id,
 				response.quiz_question_id,
 				response.quiz_answer_id,
-				response.student_id
+				response.student_id,
+				response.correct
 			);
 			res.json(response);
 		});
