@@ -241,6 +241,7 @@ module.exports = db => {
 					SELECT quiz_questions.quiz_card_id
 					FROM quiz_answers
 					JOIN quiz_questions ON quiz_questions.id = quiz_answers.quiz_question_id
+					WHERE quiz_answers.id = $3::integer
 				)
 				AS quiz_questions
 				WHERE quiz_answers.id = $3::integer
