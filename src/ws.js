@@ -177,8 +177,8 @@ const newQuizResponse = (
 	quiz_response_id,
 	quiz_card_id,
 	quiz_question_id,
-	student_id,
-	quiz_answer_id
+	quiz_answer_id,
+	student_id
 ) => {
 	wss.clients.forEach(function eachClient(client) {
 		if (client.readyState === WebSocket.OPEN) {

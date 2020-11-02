@@ -146,19 +146,31 @@ module.exports = db => {
 	router.post("/response", (req, res) => {
 		db.query(
 			`
-      INSERT INTO quiz_responses (
-        quiz_card_id,
-        quiz_answer_id,
-        session_id,
-        student_id
-      )
-      
-      VALUES ($1::integer, $2::integer, $3::uuid, $4::integer)
-			RETURNING
-				quiz_responses.id,
-				quiz_responses.quiz_card_id,
-				quiz_responses.quiz_answer_id,
-				quiz_responses.student_id
+			WITH inserted AS (
+				INSERT INTO quiz_responses (
+					quiz_card_id,
+					quiz_answer_id,
+					session_id,
+					student_id
+				)
+				
+				VALUES ($1::integer, $2::integer, $3::uuid, $4::integer)
+				RETURNING
+					quiz_responses.id,
+					quiz_responses.quiz_card_id,
+					quiz_responses.quiz_answer_id,
+					quiz_responses.student_id
+			)
+			
+			SELECT
+				inserted.id,
+				inserted.quiz_card_id,
+				quiz_answers.quiz_question_id,
+				inserted.quiz_answer_id,
+				inserted.student_id
+			FROM inserted
+			JOIN quiz_answers ON quiz_answers.id = inserted.quiz_answer_id
+			LIMIT 1;
     `,
 			[
 				req.body.quiz_card_id,
