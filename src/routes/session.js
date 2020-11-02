@@ -174,6 +174,25 @@ module.exports = db => {
 		});
 	});
 
+	router.get("/:id/lecture", (req, res) => {
+		db.query(
+			`
+			SELECT
+				sessions.lecture_id AS id,
+				lectures.lecturer_id,
+				lectures.title,
+				lectures.description
+			FROM sessions
+			JOIN lectures ON lectures.id = sessions.lecture_id
+			WHERE sessions.id = $1::uuid
+		`,
+			[req.params.id]
+		).then(({ rows: sessions }) => {
+			const [session] = sessions;
+			res.json(session);
+		});
+	});
+
 	router.post("/", (req, res) => {
 		db.query(
 			`
@@ -184,7 +203,7 @@ module.exports = db => {
       )
 
       VALUES ($1::integer, CURRENT_TIMESTAMP, CURRENT_TIME)
-      RETURNING *;
+      RETURNING sessions.id;
     `,
 			[req.body.lecture_id]
 		).then(({ rows: sessions }) => {
