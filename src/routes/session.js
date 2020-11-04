@@ -138,7 +138,7 @@ module.exports = db => {
 														ON quiz_answers.id = quiz_responses.quiz_answer_id
 														JOIN quiz_cards ON quiz_cards.id = quiz_responses.quiz_card_id
 														WHERE quiz_cards.lecture_id = $1::integer
-														AND quiz_answers.correct = true
+														AND quiz_answers.correct = false
 														GROUP BY quiz_answers.correct;
 													`,
 														[req.params.id]
