@@ -193,6 +193,33 @@ module.exports = db => {
 		});
 	});
 
+	router.post("/attendee", (req, res) => {
+		db.query(
+			`
+			SELECT
+			attendees.student_id
+			FROM attendees
+			WHERE attendees.session_id = $1::uuid
+		`,
+			[req.body.session_id]
+		).then(({ rows: attendees }) => {
+			!attendees.find(
+				attendee => attendee.student_id === req.boddy.student_id
+			) &&
+				db.query(
+					`
+				INSERT INTO attendees (
+					student_id,
+					session_id
+				)
+
+				VALUES($1::integer, $2::uuid)
+			`,
+					[req.body.student_id, req.body.session_id]
+				);
+		});
+	});
+
 	router.post("/", (req, res) => {
 		db.query(
 			`
