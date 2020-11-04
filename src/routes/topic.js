@@ -24,6 +24,7 @@ module.exports = db => {
 		).then(({ rows: cards }) => res.json(cards));
 	});
 
+	// Responses only show up IF you have both types
 	router.get("/responses/:id", (req, res) => {
 		db.query(
 			`
@@ -42,7 +43,10 @@ module.exports = db => {
 		  AND topic_reactions.session_id = $2::uuid
 		`,
 			[req.params.id, req.query.session_id]
-		).then(({ rows: responses }) => res.json(parseTopicResponses(responses)));
+		).then(({ rows: responses }) => {
+			console.log(responses);
+			res.json(parseTopicResponses(responses));
+		});
 	});
 
 	router.post("/card", (req, res) => {
