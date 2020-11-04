@@ -24,28 +24,34 @@ module.exports = db => {
 		).then(({ rows: cards }) => res.json(cards));
 	});
 
-	// Responses only show up IF you have both types
 	router.get("/responses/:id", (req, res) => {
 		db.query(
 			`
 		  SELECT
 		    topic_responses.id AS topic_response_id,
+		    topic_responses.student_id,
 		    topic_responses.type,
-		    topic_responses.response,
-		    topic_reactions.student_id,
-		    topic_reactions.id AS topic_reaction_id,
-		    topic_reactions.reaction
+		    topic_responses.response
 		  FROM topic_responses
-			JOIN topic_reactions ON
-				topic_reactions.topic_card_id = topic_responses.topic_card_id
-		  WHERE topic_responses.topic_card_id = $1::integer
+			WHERE topic_responses.topic_card_id = $1::integer
 		  AND topic_responses.session_id = $2::uuid
-		  AND topic_reactions.session_id = $2::uuid
 		`,
 			[req.params.id, req.query.session_id]
 		).then(({ rows: responses }) => {
-			console.log(responses);
-			res.json(parseTopicResponses(responses));
+			db.query(
+				`
+			SELECT
+		    topic_reactions.id AS topic_reaction_id,
+		    topic_reactions.student_id,
+		    topic_reactions.reaction
+		  FROM topic_reactions
+			WHERE topic_reactions.topic_card_id = $1::integer
+		  AND topic_reactions.session_id = $2::uuid
+			`,
+				[req.params.id, req.query.session_id]
+			).then(({ rows: reactions }) => {
+				res.json(parseTopicResponses([...responses, ...reactions]));
+			});
 		});
 	});
 
