@@ -25,19 +25,20 @@ module.exports = db => {
 	});
 
 	router.get("/responses/:id", (req, res) => {
-		db.query(
-			`
-		  SELECT
-		    topic_responses.id AS topic_response_id,
-		    topic_responses.student_id,
-		    topic_responses.type,
-		    topic_responses.response
-		  FROM topic_responses
-			WHERE topic_responses.topic_card_id = $1::integer
-		  AND topic_responses.session_id = $2::uuid
-		`,
-			[req.params.id, req.query.session_id]
-		).then(({ rows: responses }) => {
+		Promise.all([
+			db.query(
+				`
+				SELECT
+					topic_responses.id AS topic_response_id,
+					topic_responses.student_id,
+					topic_responses.type,
+					topic_responses.response
+				FROM topic_responses
+				WHERE topic_responses.topic_card_id = $1::integer
+				AND topic_responses.session_id = $2::uuid
+			`,
+				[req.params.id, req.query.session_id]
+			),
 			db.query(
 				`
 			SELECT
@@ -49,10 +50,10 @@ module.exports = db => {
 		  AND topic_reactions.session_id = $2::uuid
 			`,
 				[req.params.id, req.query.session_id]
-			).then(({ rows: reactions }) => {
-				res.json(parseTopicResponses([...responses, ...reactions]));
-			});
-		});
+			)
+		]).then(([responses, reactions]) =>
+			res.json(parseTopicResponses([...responses.rows, ...reactions.rows]))
+		);
 	});
 
 	router.post("/card", (req, res) => {
