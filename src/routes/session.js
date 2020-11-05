@@ -193,6 +193,7 @@ module.exports = db => {
 		});
 	});
 
+	// This counts lecturers as attendees not sure if it matters
 	router.post("/attendee", (req, res) => {
 		db.query(
 			`
@@ -206,8 +207,9 @@ module.exports = db => {
 			!attendees.find(
 				attendee => attendee.student_id === req.boddy.student_id
 			) &&
-				db.query(
-					`
+				db
+					.query(
+						`
 				INSERT INTO attendees (
 					student_id,
 					session_id
@@ -215,8 +217,9 @@ module.exports = db => {
 
 				VALUES($1::integer, $2::uuid)
 			`,
-					[req.body.student_id, req.body.session_id]
-				);
+						[req.body.student_id, req.body.session_id]
+					)
+					.then(() => res.status(204).json({}));
 		});
 	});
 
