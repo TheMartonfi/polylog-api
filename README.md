@@ -12,4 +12,5 @@ The repo for Polylog app can be foud [here](https://github.com/TheMartonfi/polyl
 ## Dependencies
 
 - Node
+- Websockets
 - PostgreSQL
