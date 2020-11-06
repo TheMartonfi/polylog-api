@@ -205,7 +205,7 @@ module.exports = db => {
 			[req.body.session_id]
 		).then(({ rows: attendees }) => {
 			!attendees.find(
-				attendee => attendee.student_id === req.boddy.student_id
+				attendee => attendee.student_id === req.body.student_id
 			) &&
 				db
 					.query(
