@@ -1,7 +1,7 @@
 # Polylog API
 
 This app is an api for Polylog app. This server uses express with PSQL to serve data to Polylog app.
-The repo for Polylog app can be foud [here](https://github.com/TheMartonfi/polylog-app).
+The repo for Polylog app can be found [here](https://github.com/TheMartonfi/polylog-app).
 
 ## Getting Started
 
